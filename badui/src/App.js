@@ -1,25 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Components from "./Components/Components.jsx";
+import * as Env from "./Components/environments.js";
+import Parse from "parse";
+
+Parse.initialize(Env.REACT_APP_BACK4APP_APP_ID, Env.REACT_APP_BACK4APP_JS_KEY);
+Parse.serverURL = Env.REACT_APP_BACK4APP_URL;
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  return <Components />
 }
 
 export default App;
