@@ -9,7 +9,7 @@ export const createUser = (newUser) => {
   user.set("password", newUser.password);
   user.set("email", newUser.email);
 
-  console.log("User: ", user);
+  //console.log("User: ", user);
 
   return user
     .signUp()
@@ -17,7 +17,7 @@ export const createUser = (newUser) => {
       return newUserSaved;
     })
     .catch((error) => {
-      alert(`Error: ${error.message}`);
+      //console.log(`Error: ${error.message}`);
     });
 };
 
@@ -26,14 +26,14 @@ export const loginUser = (email, password) => {
   return Parse.User.logIn(email, password)
     .then((user) => user)
     .catch((error) => {
-      alert(`Error: ${error.message}`);
+      //console.log(`Error: ${error.message}`);
     });
 };
 
 //FUNCTION ADDED TO HANDLE LOGOUT
 export const logoutUser = () => {
   return Parse.User.logOut().catch((error) => {
-    alert(`Error: ${error.message}`);
+    //alert(`Error: ${error.message}`);
   });
 };
 

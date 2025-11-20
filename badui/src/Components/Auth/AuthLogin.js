@@ -39,6 +39,7 @@ const AuthLogin = () => {
       />
       {/* BACK BUTTON ADDED FOR IMPROVED USER NAVIGATION EXPERIENCE */}
       <p> <Link to="/register">Don't have an account? Create one here.</Link></p>
+      <p> <Link to="/websites">Back to list</Link></p>
     </div>
   );
 };

@@ -1,70 +1,71 @@
 import React from "react";
+import { useState } from "react";
+import { signupButtonOnClick } from "../Scripts/BadUI";
 
-const AuthForm = ({ user, onChange, onSubmit, isRegister = false }) => {
+const AuthForm = ({ user, onChange, onSubmit, isRegister = false, uiFeature }) => {
+  const [formDivVisible, setFormDivVisible] = useState(false);
+  const [extraDivVisible, setExtraDivVisible] = useState(false);
+  const [isAbleToAuthenticate, setIsAbleToAuthenticate] = useState(false);
+
   return (
     <div>
-      <form onSubmit={onSubmit}>
+      <br />
+
+      <form onSubmit={(e) => {
+        e.preventDefault(); // prevent default browser submission
+        if (isAbleToAuthenticate) {
+          onSubmit(e);
+          return;
+        }
+      }}>
+        <label>Email: <input type="email" value={user.email} onChange={onChange} name="email" id="emailInput" required />
+          <span className="error" id="errorTextEmail"></span></label><br />
+        <br />
+
+        <label>Password: <input value={user.password} onChange={onChange} name="password" required id="passwordInput" />
+          <span className="error" id="errorTextPassword"></span></label>
+        <br />
+        <br />
+
         {isRegister ?
           <>
             <div>
-              <label>First Name</label>
-              <br />
-              <input
-                type="text"
-                value={user.firstName}
-                onChange={onChange}
-                name="firstName"
-                placeholder="first name"
-                required
-              />
-            </div>
+              <label>First Name: </label>
+              <input type="text" value={user.firstName} onChange={onChange} name="firstName" required />
+            </div> <br />
             <div>
-              <label>Last Name</label>
+              <label>Last Name: </label>
+              <input type="text" value={user.lastName} onChange={onChange} name="lastName" required />
+            </div> <br />
+
+            <div id="extraDiv" style={{ visible: extraDivVisible }}></div>
+            <div id="formDiv" style={{ visible: formDivVisible }}>
+              <label>Username: <input type="text" value={user.username} onChange={onChange} name="username" required id="usernameInput" />
+                <span className="error" id="errorTextUsername"></span></label>
               <br />
-              <input
-                type="text"
-                value={user.lastName}
-                onChange={onChange}
-                name="lastName"
-                placeholder="last name"
-                required
-              />
-            </div>{" "}
+              <br />
+              <label>Birthday: <input value={user.birthday} onChange={onChange} name="birthday" required id="birthdayInput" type="date" />
+                <span className="error" id="errorTextBirthday"></span></label>
+              <br />
+              <br />
+              <label>Phone Number: <input value={user.phoneNumber} onChange={onChange} name="phoneNumber" required type="number" id="phoneNumberInput" />
+                <span className="error" id="errorTextPhoneNumber"></span></label>
+              <br />
+              <br />
+
+              <span id="captcha"></span>
+            </div>
           </>
           : null}
 
-        <div>
-          <label>Email</label>
-          <br />
-          <input
-            type="email"
-            value={user.email}
-            onChange={onChange}
-            name="email"
-            placeholder="email"
-            required
-          />
-        </div>{" "}
-        <div>
-          <label>Password</label>
-          <br />
-          <input
-            type="password"
-            value={user.password}
-            onChange={onChange}
-            name="password"
-            placeholder="password"
-            min="0"
-            required
-          />
-        </div>
-        <div>
-          <button type="submit" onSubmit={onSubmit}>
-            {isRegister ? "Sign Up & Create Account" : "Login"}
-          </button>
-        </div>
-      </form>
-    </div>
+        <button id="signUpButton" type="submit" onClick={() => {
+          const setVars = signupButtonOnClick(uiFeature, isRegister);
+          setFormDivVisible(setVars[0]);
+          setExtraDivVisible(setVars[1]);
+          setIsAbleToAuthenticate(setVars[2]);
+        }}>{isRegister ? "Sign Up" : "Login"}</button>
+      </form >
+    </div >
   );
 };
 

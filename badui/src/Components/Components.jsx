@@ -20,6 +20,7 @@ import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.js"; //LINE ADDED
 import PublicRoute from "./PublicRoute/PublicRoute.js"; //LINE ADDED TO STOP AUTHENTICATED USERS FROM ACCESSING PUBLIC ROUTES
 import Main from "./Main/MainGood.js";
 import { isAuthenticated } from "./Auth/AuthService.js"; //LINE ADDED
+import WebsiteLinks from "./WebsiteLinks/WebsiteLinks.jsx";
 
 //COMPONENT TO WRAP ROUTES AND PROVIDE DYNAMIC AUTH CHECK
 const AuthRoutes = () => {
@@ -34,12 +35,23 @@ const AuthRoutes = () => {
     return (
         <Routes>
             {/*REDIRECT /auth TO /login*/}
-            <Route path="/auth" element={<Navigate to="/login" replace />} />
+            <Route
+                path="/auth"
+                element={<Navigate to="/login" replace />}
+            />
+
             {/*PUBLIC ROUTES THAT SHOULD NOT BE ACCESSIBLE WHEN LOGGED IN LIKE INSTRUCTIONS SAY TO DO*/}
             <Route
                 path="/register"
+                //element={<PublicRoute element={AuthRegister} isAuthed={authorized} />}
                 element={<PublicRoute element={AuthRegister} isAuthed={authorized} />}
             />
+
+            <Route
+                path="/websites/*"
+                element={<PublicRoute element={WebsiteLinks} isAuthed={false} />}
+            />
+
             <Route
                 path="/login"
                 element={<PublicRoute element={AuthLogin} isAuthed={authorized} />}
@@ -49,7 +61,7 @@ const AuthRoutes = () => {
                 path="/user"
                 element={<ProtectedRoute element={Main} isAuthed={authorized} />}
             />
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/websites" replace />} />
         </Routes>
     );
 };
