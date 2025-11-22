@@ -1,34 +1,60 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import * as badUI from "../BadUIComponents/BadUIComponents"
 //import { useState } from "react";
 
 const WebsiteLinks = () => {
     //const websites = ["Birthday", "Password", "PhoneNumberRange", "BirthdayGuesser", "SecurePassword"];
     const websites = [
+        //Birthday
         {
             name: "Birthday",
-            canLogin: false
+            canLogin: false,
+            alternativeFirstName: true,
+            alternativeLastName: true,
+            alternativeUsername: true,
+            alternativePhoneNumber: true,
+            errorTextBirthday: true
         },
-
+        //Password
         {
             name: "Password",
-            canLogin: false
+            canLogin: false,
+            errorTextPassword: true
         },
-
+        //PhoneNumberRange
         {
             name: "PhoneNumberRange",
+            alternativeFirstName: true,
+            alternativeLastName: true,
+            alternativeUsername: true,
+            alternativeBirthday: true,
+            alternativePhoneNumber: true,
             canLogin: false
         },
-
+        //BirthdayGuesser
         {
             name: "BirthdayGuesser",
+            alternativeFirstName: true,
+            alternativeLastName: true,
+            alternativeUsername: true,
+            alternativePhoneNumber: true,
+            alternativeBirthday: true,
+            errorTextBirthday: true,
             canLogin: false
         },
-
+        //SecurePassword
         {
             name: "SecurePassword",
+            errorTextPassword: true,
             canLogin: false
         },
+        //SimpleMathQuestions
+        {
+            name: "SimpleMathQuestions",
+            captcha: true,
+            canLogin: true
+        }
     ]
 
     return (
@@ -38,7 +64,23 @@ const WebsiteLinks = () => {
                 {websites.map((elem) => (
                     <div key={elem.name}>
                         <li >
-                            <Link to={"/register"} state={{ ableToLogin: elem.canLogin, uiFeature: elem.name }}>{elem.name}</Link>
+                            <Link to={"/register"} state={{
+                                ableToLogin: elem.canLogin,
+                                uiFeature: elem.name,
+                                alternativeEmail: elem.alternativeEmail,
+                                alternativePassword: elem.alternativePassword,
+                                alternativeFirstName: elem.alternativeFirstName,
+                                alternativeLastName: elem.alternativeLastName,
+                                alternativeUsername: elem.alternativeUsername,
+                                alternativeBirthday: elem.alternativeBirthday,
+                                alternativePhoneNumber: elem.alternativePhoneNumber,
+                                errorTextEmail: elem.errorTextEmail,
+                                errorTextPassword: elem.errorTextPassword,
+                                errorTextUsername: elem.errorTextUsername,
+                                errorTextBirthday: elem.errorTextBirthday,
+                                errorTextPhoneNumber: elem.errorTextPhoneNumber,
+                                captcha: elem.captcha
+                            }}>{elem.name.match(/[A-Z][a-z]+/g).join(" ")}</Link>
                         </li> <br />
                     </div>
                 ))}

@@ -3,12 +3,23 @@
 import React, { useEffect, useState } from "react";
 import { loginUser } from "./AuthService.js";
 import AuthForm from "./AuthForm.js";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 const AuthLogin = () => {
   const navigate = useNavigate();
-  const [credentials, setcredentials] = useState({ email: "", password: "" });
+  const [credentials, setcredentials] = useState({ email: "example@site.com", password: "password" });
   const [doLogin, setDoLogin] = useState(false);
+
+  const location = useLocation();
+
+  const [ui] = useState({
+    ableToLogin: location.state?.ableToLogin ?? true,
+    uiFeature: location.state?.uiFeature ?? null,
+    alternativeEmail: location.state?.alternativeEmail ?? null,
+    alternativePassword: location.state?.alternativePassword ?? null,
+    errorTextEmail: location.state?.errorTextEmail ?? null,
+    captcha: location.state?.captcha ?? null,
+  });
 
   useEffect(() => {
     if (doLogin) {
@@ -34,6 +45,7 @@ const AuthLogin = () => {
   return (
     <div>
       <AuthForm user={credentials}
+        ui={ui}
         onChange={onChangeHandler}
         onSubmit={onSubmitHandler}
       />
