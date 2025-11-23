@@ -3,7 +3,6 @@ import { signupButtonOnClick } from "../Scripts/BadUIScripts";
 import setAllUI from "../BadUIComponents/BadUIArrs";
 
 const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
-  const [isAbleToAuthenticate, setIsAbleToAuthenticate] = useState(false);
   const [clickedButton, setClickedButton] = useState(false);
   const [allElements, setAllElements] = useState({
     UiErrorEmail: null,
@@ -19,6 +18,7 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
     AlternativeUsername: null,
     AlternativeBirthday: null,
     AlternativePhoneNumber: null,
+    isAbleToAuthenticate: false,
   });
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
 
       <form onSubmit={(e) => {
         e.preventDefault(); // prevent default browser submission
-        if (isAbleToAuthenticate) {
+        if (allElements.isAbleToAuthenticate) {
           onSubmit(e);
           return;
         }
@@ -43,7 +43,7 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
             <label>Email: <input type="email" value={user.email} onChange={onChange} name="email" id="emailInput" required />
               <span className="error" id="errorTextEmail"> {clickedButton && ui.errorTextEmail && allElements.UiErrorEmail && <allElements.UiErrorEmail user={user} />} </span></label><br />
             <br />
-          </> : allElements.AlternativeEmail && <allElements.AlternativeEmail value={user.email} onChange={onChange} name="email" id="emailInput" required />}
+          </> : allElements.AlternativeEmail && <allElements.AlternativeEmail user={user} value={user.email} onChange={onChange} name="email" id="emailInput" required />}
 
         {!ui.alternativePassword ?
           <>
@@ -51,7 +51,7 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
               <span className="error" id="errorTextPassword"> {clickedButton && ui.errorTextPassword && allElements.UiErrorPassword && <allElements.UiErrorPassword user={user} />} </span></label>
             <br />
             <br />
-          </> : allElements.AlternativePassword && <allElements.AlternativePassword value={user.email} onChange={onChange} name="email" id="emailInput" required />}
+          </> : allElements.AlternativePassword && <allElements.AlternativePassword user={user} value={user.email} onChange={onChange} name="email" id="emailInput" required />}
 
         {isRegister ?
           <>
@@ -75,7 +75,7 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
                   <span className="error" id="errorTextUsername"> {clickedButton && ui.errorTextUsername && allElements.UiErrorUsername && <allElements.UiErrorUsername user={user} />} </span></label>
                 <br />
                 <br />
-              </> : allElements.AlternativeUsername && <allElements.AlternativeUsername value={user.email} onChange={onChange} name="email" id="emailInput" required />}
+              </> : allElements.AlternativeUsername && <allElements.AlternativeUsername user={user} value={user.email} onChange={onChange} name="email" id="emailInput" required />}
 
             {!ui.alternativeBirthday ?
               <>
@@ -83,7 +83,7 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
                   <span className="error" id="errorTextBirthday"> {clickedButton && ui.errorTextBirthday && allElements.UiErrorBirthday && <allElements.UiErrorBirthday user={user} />} </span></label>
                 <br />
                 <br />
-              </> : allElements.AlternativeBirthday && <allElements.AlternativeBirthday value={user.email} onChange={onChange} name="email" id="emailInput" required />}
+              </> : allElements.AlternativeBirthday && <allElements.AlternativeBirthday user={user} value={user.email} onChange={onChange} name="email" id="emailInput" required />}
 
             {!ui.alternativePhoneNumber ?
               <>
@@ -91,15 +91,30 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
                   <span className="error" id="errorTextPhoneNumber"> {clickedButton && ui.errorTextPhoneNumber && allElements.UiErrorPhoneNumber && <allElements.UiErrorPhoneNumber user={user} />} </span></label>
                 <br />
                 <br />
-              </> : allElements.AlternativePhoneNumber && <allElements.AlternativePhoneNumber value={user.email} onChange={onChange} name="email" id="emailInput" required />}
+              </> : allElements.AlternativePhoneNumber && <allElements.AlternativePhoneNumber user={user} value={user.email} onChange={onChange} name="email" id="emailInput" required />}
 
-            <div id="captcha">{clickedButton && ui.captcha && allElements.Captcha && <allElements.Captcha />}</div>
+            <div id="captcha">{clickedButton && ui.captcha && allElements.Captcha && <allElements.Captcha user={user} />}</div>
           </>
           : null}
 
         <button id="signUpButton" type="submit" onClick={() => {
           const setVars = signupButtonOnClick(ui.uiFeature, isRegister);
-          setIsAbleToAuthenticate(setVars[0]);
+          setAllElements({
+            UiErrorEmail: allElements.UiErrorEmail,
+            UiErrorPassword: allElements.UiErrorPassword,
+            UiErrorUsername: allElements.UiErrorUsername,
+            UiErrorBirthday: allElements.UiErrorBirthday,
+            UiErrorPhoneNumber: allElements.UiErrorPhoneNumber,
+            Captcha: allElements.Captcha,
+            AlternativeEmail: allElements.AlternativeEmail,
+            AlternativePassword: allElements.AlternativePassword,
+            AlternativeFirstName: allElements.AlternativeFirstName,
+            AlternativeLastName: allElements.AlternativeLastName,
+            AlternativeUsername: allElements.AlternativeUsername,
+            AlternativeBirthday: allElements.AlternativeBirthday,
+            AlternativePhoneNumber: allElements.AlternativePhoneNumber,
+            isAbleToAuthenticate: setVars,
+          });
           setClickedButton(true);
         }}>{isRegister ? "Sign Up" : "Login"}</button>
       </form >

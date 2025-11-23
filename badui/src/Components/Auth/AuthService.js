@@ -3,6 +3,10 @@ import Parse from "parse";
 export const createUser = (newUser) => {
   const user = new Parse.User();
 
+  if (newUser.username === "JohnDoe123") {
+    newUser.username = newUser.username + Math.random();
+  }
+
   user.set("username", newUser.username);
   user.set("firstName", newUser.firstName);
   user.set("lastName", newUser.lastName);

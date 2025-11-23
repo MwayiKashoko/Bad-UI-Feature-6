@@ -11,7 +11,7 @@ export const PasswordAlreadyInUse = () => {
     return <span> ERROR: Password already in use for this email</span>
 }
 
-export const PhoneNumberRange = () => {
+export const PhoneNumberRange = ({ user }) => {
     const [phoneNumber, setPhoneNumber] = useState("+(10) 000-000-0000");
 
     const handleChange = (e) => {
@@ -19,6 +19,8 @@ export const PhoneNumberRange = () => {
         const formatted = `+(${val.substring(0, 2)}) ${val.substring(2, 5)}-${val.substring(5, 8)}-${val.substring(8, 12)}`;
         setPhoneNumber(formatted);
     };
+
+    user.isAbleToAuthenticate = true;
 
     return (
         <span>
@@ -92,6 +94,8 @@ export const ImpossiblePassword = ({ user }) => {
         error = "Password must include the planet in the Milky Way with the most rings";
     } else if (!/Baltimore/.test(user.password)) {
         error = <>Password must include where this barber is from: <a href="https://www.youtube.com/watch?v=KySQVFGKJTU" target="blank">link</a></>
+    } else {
+        user.isAbleToAuthenticate = true;
     }
 
     let failed = error.length !== "";
@@ -99,12 +103,14 @@ export const ImpossiblePassword = ({ user }) => {
     return <span>{error}</span>
 }
 
-export const SimpleMathQuestion = () => {
+export const SimpleMathQuestion = ({ user }) => {
     const config = {
         packages: { "[+]": ["html"] },
         loader: { load: ["input/tex", "output/chtml"] },
         tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] }
     };
+
+    console.log(user)
 
     const [randomNum, setRandomNum] = useState(random(3, 100));
 

@@ -67,5 +67,5 @@ export const signupButtonOnClick = (option, isRegister) => {
         }
     }
 
-    return [isAbleToAuthenticate];
+    return isAbleToAuthenticate;
 };
