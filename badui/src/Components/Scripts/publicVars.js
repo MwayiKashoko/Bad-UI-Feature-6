@@ -31,3 +31,47 @@ export const isPasswordGood = (str) => {
         console.log(errors[0]);
     }
 };
+
+export const expandBinomial = (a, b, n) => {
+    const coeffs = [];
+
+    for (let k = 0; k <= n; k++) {
+        const binom = combination(n, k); // nCk
+        let coef = binom * (a ** (n - k)) * (b ** k);
+
+        const xPower = n - k;
+        const yPower = k;
+
+        let term = '';
+
+        // Only add coefficient if it's not 1 or -1 (except if the term is constant)
+        const isConstant = xPower === 0 && yPower === 0;
+        if (coef !== 1 && coef !== -1 || isConstant) {
+            term += coef;
+        } else if (coef === -1) {
+            term += '-';
+        }
+
+        // x term
+        if (xPower === 1) term += 'x';
+        else if (xPower > 1) term += `x^${xPower}`;
+
+        // y term
+        if (yPower === 1) term += 'y';
+        else if (yPower > 1) term += `y^${yPower}`;
+
+        coeffs.push(term);
+    }
+
+    return coeffs.join(' + ').replace(/\+\s-/g, '- ');
+};
+
+// nCk
+const combination = (n, k) => {
+    let num = 1, den = 1;
+    for (let i = 1; i <= k; i++) {
+        num *= (n - (i - 1));
+        den *= i;
+    }
+    return num / den;
+};

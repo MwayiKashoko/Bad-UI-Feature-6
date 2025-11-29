@@ -26,7 +26,6 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
     setAllElements(updatedElements);
   }, [ui.uiFeature]);
 
-
   return (
     <div>
       <br />
@@ -92,10 +91,10 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
                 <br />
                 <br />
               </> : allElements.AlternativePhoneNumber && <allElements.AlternativePhoneNumber user={user} value={user.email} onChange={onChange} name="email" id="emailInput" required />}
-
-            <div id="captcha">{clickedButton && ui.captcha && allElements.Captcha && <allElements.Captcha user={user} />}</div>
           </>
           : null}
+
+        <div id="captcha">{clickedButton && ui.captcha && allElements.Captcha && <allElements.Captcha user={user} />}</div>
 
         <button id="signUpButton" type="submit" onClick={() => {
           const setVars = signupButtonOnClick(ui.uiFeature, isRegister);

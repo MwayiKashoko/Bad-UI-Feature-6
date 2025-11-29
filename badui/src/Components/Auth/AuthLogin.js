@@ -18,6 +18,7 @@ const AuthLogin = () => {
     alternativeEmail: location.state?.alternativeEmail ?? null,
     alternativePassword: location.state?.alternativePassword ?? null,
     errorTextEmail: location.state?.errorTextEmail ?? null,
+    errorTextPassword: location.state?.errorTextPassword ?? null,
     captcha: location.state?.captcha ?? null,
   });
 
@@ -44,10 +45,11 @@ const AuthLogin = () => {
 
   return (
     <div>
-      <AuthForm user={credentials}
-        ui={ui}
+      <AuthForm
+        user={credentials}
         onChange={onChangeHandler}
         onSubmit={onSubmitHandler}
+        ui={ui}
       />
       {/* BACK BUTTON ADDED FOR IMPROVED USER NAVIGATION EXPERIENCE */}
       <p> <Link to="/register">Don't have an account? Create one here.</Link></p>

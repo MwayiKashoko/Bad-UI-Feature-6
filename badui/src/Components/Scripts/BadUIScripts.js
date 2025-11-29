@@ -61,6 +61,10 @@ export const signupButtonOnClick = (option, isRegister) => {
                 break;
             case "Password":
                 break;
+            case "SecurePassword":
+                break;
+            case "SimpleMathQuestions":
+                break;
             default:
                 isAbleToAuthenticate = true;
                 break;
