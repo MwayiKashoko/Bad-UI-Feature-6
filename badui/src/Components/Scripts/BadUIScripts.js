@@ -1,4 +1,4 @@
-import { /*random, isPasswordGood*/ } from "./publicVars.js";
+import { isAbleToAuthenticate, setIsAbleToAuthenticate } from "./publicVars.js";
 
 let emailInput;
 let usernameInput;
@@ -49,27 +49,10 @@ export const generateRandomDate = (earliestDate, latestDate) => {
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 };
 
-export const signupButtonOnClick = (option, isRegister) => {
+export const signupButtonOnClick = (isRegister) => {
     setVars();
 
-    let isAbleToAuthenticate = false;
-
-    if ((isRegister && checkIfCanRegister()) || (!isRegister && checkIfCanLogin())) {
-        //Basically have two swithces for option so I can set the isAbleToAuthenticate flag to true or false
-        switch (option) {
-            case "Birthday":
-                break;
-            case "Password":
-                break;
-            case "SecurePassword":
-                break;
-            case "SimpleMathQuestions":
-                break;
-            default:
-                isAbleToAuthenticate = true;
-                break;
-        }
+    if ((!isRegister || !checkIfCanRegister()) && (isRegister || !checkIfCanLogin())) {
+        setIsAbleToAuthenticate(false);
     }
-
-    return isAbleToAuthenticate;
 };

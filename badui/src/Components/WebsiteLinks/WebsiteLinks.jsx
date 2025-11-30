@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import * as badUI from "../BadUIComponents/BadUIComponents"
+import { setIsAbleToAuthenticate } from "../Scripts/publicVars";
 //import { useState } from "react";
 
 const WebsiteLinks = () => {
@@ -54,6 +55,42 @@ const WebsiteLinks = () => {
             name: "SimpleMathQuestions",
             captcha: true,
             canLogin: true
+        },
+        //GuessTheNumber
+        {
+            name: "GuessTheNumber",
+            captcha: true,
+            canLogin: true
+        },
+
+        {
+            name: "TetrisMasterMode",
+            captcha: true,
+            canLogin: true
+        },
+
+        {
+            name: "TetrisInvisibleMode",
+            captcha: true,
+            canLogin: true
+        },
+
+        {
+            name: "TetrisSprint",
+            captcha: true,
+            canLogin: true
+        },
+
+        {
+            name: "TetrisFast",
+            captcha: true,
+            canLogin: true
+        },
+
+        {
+            name: "TetrisMarathon",
+            captcha: true,
+            canLogin: true
         }
     ]
 
@@ -64,7 +101,7 @@ const WebsiteLinks = () => {
                 {websites.map((elem) => (
                     <div key={elem.name}>
                         <li >
-                            <Link to={"/register"} state={{
+                            <Link onClick={setIsAbleToAuthenticate(false)} to={"/register"} state={{
                                 ableToLogin: elem.canLogin,
                                 uiFeature: elem.name,
                                 alternativeEmail: elem.alternativeEmail,

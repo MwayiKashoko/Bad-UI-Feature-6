@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { loginUser } from "./AuthService.js";
 import AuthForm from "./AuthForm.js";
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import { setIsAbleToAuthenticate } from "../Scripts/publicVars.js";
 
 const AuthLogin = () => {
   const navigate = useNavigate();
@@ -52,8 +53,8 @@ const AuthLogin = () => {
         ui={ui}
       />
       {/* BACK BUTTON ADDED FOR IMPROVED USER NAVIGATION EXPERIENCE */}
-      <p> <Link to="/register">Don't have an account? Create one here.</Link></p>
-      <p> <Link to="/websites">Back to list</Link></p>
+      <p> <Link onClick={setIsAbleToAuthenticate(false)} to="/register">Don't have an account? Create one here.</Link></p>
+      <p> <Link onClick={setIsAbleToAuthenticate(false)} to="/websites">Back to list</Link></p>
     </div>
   );
 };

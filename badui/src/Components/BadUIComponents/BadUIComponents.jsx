@@ -1,7 +1,8 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { generateRandomDate, generateRandomDateObject } from "../Scripts/BadUIScripts";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
-import { random, expandBinomial } from "../Scripts/publicVars";
+import { random, expandBinomial, isAbleToAuthenticate, setIsAbleToAuthenticate } from "../Scripts/publicVars";
+import { tetrisCode } from "./Tetris";
 import * as math from "mathjs";
 
 export const BirthdayNeverAvailable = () => {
@@ -12,7 +13,7 @@ export const PasswordAlreadyInUse = () => {
     return <span> ERROR: Password already in use for this email</span>
 }
 
-export const PhoneNumberRange = ({ user }) => {
+export const PhoneNumberRange = () => {
     const [phoneNumber, setPhoneNumber] = useState("+(10) 000-000-0000");
 
     const handleChange = (e) => {
@@ -21,7 +22,7 @@ export const PhoneNumberRange = ({ user }) => {
         setPhoneNumber(formatted);
     };
 
-    user.isAbleToAuthenticate = true;
+    setIsAbleToAuthenticate(true);
 
     return (
         <span>
@@ -74,8 +75,8 @@ export const ImpossiblePassword = ({ user }) => {
         error = "Password must include a special character.";
     } else if (!/\$.*?\$.*\$.*\$.*\$.*/.test(user.password)) {
         error = "Password must contain the $ character at least 5 times";
-    } else if (!/Agartha/.test(user.password)) {
-        error = "Password must contain the phrase Agartha (For Yakub)";
+    } else if (!/Dvorak/.test(user.password)) {
+        error = "Password must contain the phrase Dvorak (For Czechia)";
     } else if (!/none|atonal/.test(user.password)) {
         error = <>
             Password must include the key signature of this piece of music <a target="blank" href="https://www.youtube.com/watch?v=kw-YSlUQvgw">link</a>
@@ -96,7 +97,7 @@ export const ImpossiblePassword = ({ user }) => {
     } else if (!/Baltimore/.test(user.password)) {
         error = <>Password must include where this barber is from: <a href="https://www.youtube.com/watch?v=KySQVFGKJTU" target="blank">link</a></>
     } else {
-        user.isAbleToAuthenticate = true;
+        setIsAbleToAuthenticate(true);
     }
 
     let failed = error.length !== "";
@@ -223,7 +224,7 @@ export const SimpleMathQuestion = ({ user }) => {
             </MathJaxContext>
 
             <input ref={inputRef} /> <button onClick={() => {
-                if (checkIfMathRight() || user.isAbleToAuthenticate) {
+                if (checkIfMathRight() || isAbleToAuthenticate) {
                     setNumSolvedEquations(numSolvedEquations + 1);
                 } else {
                     setNumSolvedEquations(0);
@@ -232,7 +233,7 @@ export const SimpleMathQuestion = ({ user }) => {
                 setTypeOfEquation(random(1, 4));
 
                 if (numSolvedEquations === 3) {
-                    user.isAbleToAuthenticate = true;
+                    setIsAbleToAuthenticate(true);
                     formula = ``;
                     setText("Success!!! Press signup to login");
                 } else {
@@ -241,4 +242,111 @@ export const SimpleMathQuestion = ({ user }) => {
             }}>Submit Answer</button> <br /> <br />
         </span>
     );
+}
+
+export const GuessTheNumber = () => {
+    const [num, setNum] = useState(random(1, Number.MAX_SAFE_INTEGER));
+    const [text, setText] = useState("");
+    const inputRef = useRef();
+
+    return (<>
+        <h2>Guess the number I'm thinking of between 1 and {Number.MAX_SAFE_INTEGER}:</h2>
+        <span>{text}</span> <br /><br />
+        <input ref={inputRef} /> <button onClick={() => {
+            const isTrue = parseInt(inputRef.current.value) === num;
+
+            if (isTrue) {
+                setIsAbleToAuthenticate(true);
+                setText("You can authenticate!");
+            } else {
+                setNum(random(1, Number.MAX_SAFE_INTEGER));
+                setText("Try Again!");
+            }
+        }}>Submit</button> <br /><br />
+    </>);
+}
+
+export const TetrisGame = ({ user, ui }) => {
+    const canvasRef = useRef();
+    const [authFlag, setAuthFlag] = useState(isAbleToAuthenticate);
+
+    let gamemode;
+
+    switch (ui.uiFeature) {
+        case "TetrisMasterMode":
+            gamemode = "Master";
+            break;
+        case "TetrisInvisibleMode":
+            gamemode = "Invisible";
+            break;
+        case "TetrisSprint":
+            gamemode = "Sprint";
+            break;
+        case "TetrisFast":
+            gamemode = "Fast";
+            break;
+        case "TetrisMarathon":
+            gamemode = "Marathon";
+            break;
+        default:
+            break;
+    }
+
+    const [text, setText] = useState("");
+    const [showCanvas, setShowCanvas] = useState(true);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            // Sync global → React state
+            setAuthFlag(isAbleToAuthenticate);
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        tetrisCode(canvas, gamemode); // now canvas is defined
+    }, [gamemode]);
+
+    useEffect(() => {
+        if (authFlag) {
+            console.log(4);
+            setText("Verification successful You can sign in now!");
+            setShowCanvas(false);
+        }
+    }, [authFlag]);
+
+    useEffect(() => {
+        switch (ui.uiFeature) {
+            case "TetrisMasterMode":
+                setText("Could not verify that you're a human. Please clear 20 lines to verify you are not a robot.");
+                break;
+            case "TetrisInvisibleMode":
+                setText("Could not verify that you're a human. Please clear 10 lines to verify you are not a robot.");
+                break;
+            case "TetrisSprint":
+                setText("Could not verify that you're a human. Please clear 20 lines in under 30 seconds to verify you are not a robot.");
+                break;
+            case "TetrisFast":
+                setText("Could not verify that you're a human. Please clear 20 lines to verify you are not a robot.");
+                break;
+            case "TetrisMarathon":
+                setText("Could not verify that you're a human. Please clear Marathon mode to verify you are not a robot.");
+                break;
+            default:
+                setText("null");
+                break;
+        }
+    }, [ui.uiFeature]);
+
+    return (<>
+        <h2>{text}</h2>
+        {showCanvas && <>
+            <canvas ref={canvasRef} width={600} height={600} style={{ backgroundColor: "black", marginRight: "20px" }}></canvas>
+            <button onClick={() => alert('Use the left and right arrow keys to move the piece, the up arrow key to rotate the piece right, x to rotate the piece left, the down arrow key to drop the piece down faster, z to instantly drop a piece to the board, and shift to hold a piece to use for later.')}>Help</button> <br /> <br />
+        </>}
+    </>);
 }

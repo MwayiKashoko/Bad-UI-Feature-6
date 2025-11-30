@@ -19,6 +19,30 @@ const errorComponents = {
 const captchaObj = {
     SimpleMathQuestions: {
         Captcha: badUI.SimpleMathQuestion
+    },
+
+    GuessTheNumber: {
+        Captcha: badUI.GuessTheNumber
+    },
+
+    TetrisMasterMode: {
+        Captcha: badUI.TetrisGame
+    },
+
+    TetrisInvisibleMode: {
+        Captcha: badUI.TetrisGame
+    },
+
+    TetrisSprint: {
+        Captcha: badUI.TetrisGame
+    },
+
+    TetrisFast: {
+        Captcha: badUI.TetrisGame
+    },
+
+    TetrisMarathon: {
+        Captcha: badUI.TetrisGame
     }
 }
 

@@ -1,3 +1,9 @@
+export let isAbleToAuthenticate = false;
+
+export const setIsAbleToAuthenticate = (val) => {
+    isAbleToAuthenticate = val;
+}
+
 export const random = (min, max) => {
     return Math.floor((max - min + 1) * Math.random()) + min;
 };
@@ -46,7 +52,7 @@ export const expandBinomial = (a, b, n) => {
 
         // Only add coefficient if it's not 1 or -1 (except if the term is constant)
         const isConstant = xPower === 0 && yPower === 0;
-        if (coef !== 1 && coef !== -1 || isConstant) {
+        if ((coef !== 1 && coef !== -1) || isConstant) {
             term += coef;
         } else if (coef === -1) {
             term += '-';

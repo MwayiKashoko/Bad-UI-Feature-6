@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createUser } from "./AuthService";
 import AuthForm from "./AuthForm";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { setIsAbleToAuthenticate } from "../Scripts/publicVars";
 
 const AuthRegister = () => {
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ const AuthRegister = () => {
       />
       {/* BACK BUTTON ADDED FOR IMPROVED USER NAVIGATION EXPERIENCE */}
       {ui.ableToLogin ? <p><Link to="/login">Already have an account? Login here.</Link></p> : null}
-      <p> <Link to="/websites">Back to list</Link></p>
+      <p> <Link onClick={() => setIsAbleToAuthenticate(false)} to="/websites">Back to list</Link></p>
     </div>
   );
 };

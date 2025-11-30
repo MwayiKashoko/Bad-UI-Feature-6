@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { signupButtonOnClick } from "../Scripts/BadUIScripts";
 import setAllUI from "../BadUIComponents/BadUIArrs";
+import { isAbleToAuthenticate } from "../Scripts/publicVars";
 
 const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
   const [clickedButton, setClickedButton] = useState(false);
@@ -18,7 +19,6 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
     AlternativeUsername: null,
     AlternativeBirthday: null,
     AlternativePhoneNumber: null,
-    isAbleToAuthenticate: false,
   });
 
   useEffect(() => {
@@ -32,7 +32,8 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
 
       <form onSubmit={(e) => {
         e.preventDefault(); // prevent default browser submission
-        if (allElements.isAbleToAuthenticate) {
+
+        if (isAbleToAuthenticate) {
           onSubmit(e);
           return;
         }
@@ -94,10 +95,10 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
           </>
           : null}
 
-        <div id="captcha">{clickedButton && ui.captcha && allElements.Captcha && <allElements.Captcha user={user} />}</div>
+        <div id="captcha">{clickedButton && ui.captcha && allElements.Captcha && <allElements.Captcha user={user} ui={ui} />}</div>
 
         <button id="signUpButton" type="submit" onClick={() => {
-          const setVars = signupButtonOnClick(ui.uiFeature, isRegister);
+          signupButtonOnClick(isRegister);
           setAllElements({
             UiErrorEmail: allElements.UiErrorEmail,
             UiErrorPassword: allElements.UiErrorPassword,
@@ -112,8 +113,8 @@ const AuthForm = ({ user, onChange, onSubmit, isRegister = false, ui }) => {
             AlternativeUsername: allElements.AlternativeUsername,
             AlternativeBirthday: allElements.AlternativeBirthday,
             AlternativePhoneNumber: allElements.AlternativePhoneNumber,
-            isAbleToAuthenticate: setVars,
           });
+
           setClickedButton(true);
         }}>{isRegister ? "Sign Up" : "Login"}</button>
       </form >
