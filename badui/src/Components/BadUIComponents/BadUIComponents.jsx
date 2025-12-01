@@ -14,11 +14,11 @@ export const PasswordAlreadyInUse = () => {
 }
 
 export const PhoneNumberRange = () => {
-    const [phoneNumber, setPhoneNumber] = useState("+(10) 000-000-0000");
+    const [phoneNumber, setPhoneNumber] = useState("+(50) 500-000-0000");
 
     const handleChange = (e) => {
         const val = e.target.value;
-        const formatted = `+(${val.substring(0, 2)}) ${val.substring(2, 5)}-${val.substring(5, 8)}-${val.substring(8, 12)}`;
+        const formatted = `+(${val.length === 11 ? val.substring(0, 1) : val.substring(0, 2)}) ${val.length === 11 ? val.substring(1, 4) : val.substring(2, 5)}-${val.length === 11 ? val.substring(4, 7) : val.substring(5, 8)}-${val.length === 11 ? val.substring(7, 11) : val.substring(8, 12)}`;
         setPhoneNumber(formatted);
     };
 
@@ -26,7 +26,7 @@ export const PhoneNumberRange = () => {
 
     return (
         <span>
-            <label>Enter Phone Number: <input onChange={handleChange} min="100000000000" max="999999999999" type='range' /></label> {phoneNumber}
+            <label>Enter Phone Number: <input onChange={handleChange} min="10000000000" max="999999999999" type='range' /></label> {phoneNumber}
             <br /> <br />
         </span>);
 }
@@ -48,6 +48,8 @@ export const BirthdayGuesser = () => {
         setCurrentDate(generateRandomDateObject(newEarliest, latestDate));
     }
 
+    setIsAbleToAuthenticate(true);
+
     return (
         <span>
             <button onClick={handleEarlier}>Earlier</button> Is this your birthday? {currentDate.toLocaleDateString()} <button
@@ -65,6 +67,8 @@ export const ImpossiblePassword = ({ user }) => {
         tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] }
     };
 
+    const inputRef = useRef();
+
     if (user.password.length <= 9) {
         error = "Password must be longer than 9 characters.";
     } else if (!/[A-Z]/.test(user.password)) {
@@ -79,7 +83,7 @@ export const ImpossiblePassword = ({ user }) => {
         error = "Password must contain the phrase Dvorak (For Czechia)";
     } else if (!/none|atonal/.test(user.password)) {
         error = <>
-            Password must include the key signature of this piece of music <a target="blank" href="https://www.youtube.com/watch?v=kw-YSlUQvgw">link</a>
+            Password must include the key signature of this piece of music (lowercase) <a target="blank" href="https://www.youtube.com/watch?v=kw-YSlUQvgw">link</a>
         </>
     } else if (!/pi\^2\/6/.test(user.password)) {
         error = <span>
@@ -89,13 +93,13 @@ export const ImpossiblePassword = ({ user }) => {
             </MathJaxContext>
         </span>
     } else if (!/green/.test(user.password)) {
-        error = "Password must include my favorite color";
+        error = "Password must include my favorite color (lowercase)";
     } else if (!/Liszt/.test(user.password)) {
-        error = "A jelszónak tartalmaznia kell a leghíresebb magyar zeneszerzőt";
+        error = "A jelszónak tartalmaznia kell a leghíresebb magyar zeneszerzőt (nagybetűvé tegye a nevet)";
     } else if (!/J1407b/.test(user.password)) {
         error = "Password must include the planet in the Milky Way with the most rings";
     } else if (!/Baltimore/.test(user.password)) {
-        error = <>Password must include where this barber is from: <a href="https://www.youtube.com/watch?v=KySQVFGKJTU" target="blank">link</a></>
+        error = <>Password must include where this barber is from (Uppercase): <a href="https://www.youtube.com/watch?v=KySQVFGKJTU" target="blank">link</a></>
     } else {
         setIsAbleToAuthenticate(true);
     }
@@ -134,14 +138,14 @@ export const SimpleMathQuestion = ({ user }) => {
             num1 = random(10000, 1000000) * 2;
             num2 = random(10000, 1000000) * 2;
             formula = `\\[gcd(${num1}, ${num2}) = ?\\]`;
-            console.log(math.gcd(num1, num2));
+            //console.log(math.gcd(num1, num2));
             break;
         case 2:
             num1 = random(5, 10);
             num2 = random(5, 10);
             num3 = random(5, 10);
             formula = `Expand \\[(${num1}x+${num2}y)^${num3} \\]`;
-            console.log(expandBinomial(num1, num2, num3));
+            //console.log(expandBinomial(num1, num2, num3));
             break;
         case 3:
             num1 = random(1, 10);
@@ -157,7 +161,7 @@ export const SimpleMathQuestion = ({ user }) => {
                 actualAnswer += num3 * i ** num4;
             }
 
-            console.log(actualAnswer);
+            //console.log(actualAnswer);
 
             break;
         case 4:
@@ -176,7 +180,7 @@ export const SimpleMathQuestion = ({ user }) => {
                 .join(' \\\\ ');
 
             formula = `\\[ \\det\\!\\begin{pmatrix} ${latexMatrix} \\end{pmatrix} \\]`;
-            console.log(math.det(matrixValues));
+            //console.log(math.det(matrixValues));
             break;
         default:
             break;
@@ -208,9 +212,9 @@ export const SimpleMathQuestion = ({ user }) => {
         }
 
         if (cond) {
-            console.log("CORRRECT");
+            //console.log("CORRRECT");
         } else {
-            console.log("NOPE");
+            //console.log("NOPE");
         }
 
         return cond;
@@ -313,7 +317,7 @@ export const TetrisGame = ({ user, ui }) => {
 
     useEffect(() => {
         if (authFlag) {
-            console.log(4);
+            //console.log(4);
             setText("Verification successful You can sign in now!");
             setShowCanvas(false);
         }

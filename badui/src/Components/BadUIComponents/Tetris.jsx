@@ -13,7 +13,8 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
     let blockSpeedScale = 1;
     let blockSpeedIncrement = 0;
     let yPos = 0;
-    let timeToLock = 100;
+    let timeToLockConst = 10;
+    let timeToLock = timeToLockConst;
     let canIncreaseSpeed = true;
 
     canvas.width = width + 250;
@@ -122,7 +123,8 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
     let currentCol = Math.round((cols - currentPiece.length) / 2);
 
     const resetBoard = () => {
-        timeToLock = 100;
+        timeToLock = timeToLockConst;
+        blockSpeed = 0.25;
         downPressed = false;
         score = 0;
         level = 1;
@@ -234,7 +236,12 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
 
             return lastCol.every(block => block == 0 || (endingPosition + currentCol < grid[0].length)) &&
                 currentPiece.every((row, i, arr) => row.every((block, j) => {
-                    return block == 0 || (j + currentCol + 1 < grid[0].length && grid[i + currentRow][j + currentCol + 1] == 0);
+                    return block == 0 ||
+                        (j + currentCol + 1 < grid[0].length &&
+                            i + currentRow < grid.length &&
+                            grid[i + currentRow] != undefined &&
+                            j + currentCol + 1 < grid[i + currentRow].length &&
+                            grid[i + currentRow][j + currentCol + 1] == 0);
                 }));
         }
 
@@ -248,7 +255,11 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
         }
 
         return lastRow.every(block => block == 0 || currentRow + endingPosition < grid.length) &&
-            currentPiece.every((row, i) => row.every((block, j) => block == 0 || (i + currentRow + 1 < grid.length && grid[i + currentRow + 1][j + currentCol] == 0)));
+            currentPiece.every((row, i) => row.every((block, j) => block == 0 ||
+                (i + currentRow + 1 < grid.length &&
+                    grid[i + currentRow + 1] != undefined &&
+                    j + currentCol < grid[i + currentRow + 1].length &&
+                    grid[i + currentRow + 1][j + currentCol] == 0)));
     }
 
     const translatePiece = (col, row) => {
@@ -629,7 +640,7 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                         }
                     } catch (error) {
                         //state = "Game Over";
-                        resetBoard();
+                        //resetBoard();
                     }
                 }
             }
@@ -672,13 +683,7 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                 }
             }
 
-            if (state == "Master") {
-                timeToLock = Math.ceil(25 / ((level - 50) / 8));
-            } else if (state != "Fast") {
-                timeToLock = Math.ceil(25 / (level / 8));
-            } else {
-                timeToLock = 10;
-            }
+            timeToLock = timeToLockConst;
 
             nextPiece();
 
@@ -707,11 +712,15 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
             for (let i = 0; i < currentPiece.length; i++) {
                 for (let j = 0; j < currentPiece[i].length; j++) {
                     if (currentPiece[i][j] != 0) {
-                        if (i + currentRow >= 0 && grid[i + currentRow][j + currentCol] != 0) {
-                            //transition = true;
+                        try {
+                            if (i + currentRow >= 0 && grid[i + currentRow][j + currentCol] != 0) {
+                                //transition = true;
 
-                            lastState = state;
-                            resetBoard();
+                                lastState = state;
+                                resetBoard();
+                            }
+                        } catch (e) {
+
                         }
                     }
                 }
@@ -724,13 +733,7 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                     timeToLock = 0;
                 }
             } else {
-                if (state == "Master") {
-                    timeToLock = Math.ceil(25 / ((level - 50) / 8));
-                } else if (state != "Fast") {
-                    timeToLock = Math.ceil(25 / (level / 8));
-                } else {
-                    timeToLock = 10;
-                }
+                timeToLock = timeToLockConst;
 
                 for (let i = 0; i < currentPiece.length; i++) {
                     for (let j = 0; j < currentPiece[i].length; j++) {
@@ -955,6 +958,10 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
 
             time++;
 
+            if (time / 60 > 30) {
+                resetBoard();
+            }
+
             if (linesCleared >= 20) {
                 transition = true;
                 lastState = state;
@@ -981,7 +988,7 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                 canAuthenticate = true;
             }
         } else if (state == "Fast") {
-            blockSpeed += 0.01;
+            blockSpeed += 0.005;
 
             lastState = state;
 
@@ -1064,13 +1071,13 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                 try {
                     rotatePiece("clockwise");
                 } catch (error) {
-                    resetBoard();
+                    //resetBoard();
                 }
             } else if (e.key == "x") {
                 try {
                     rotatePiece("counter-clockwise");
                 } catch (error) {
-                    resetBoard();
+                    //resetBoard();
                 }
             } else if (e.key == "Shift") {
                 if (canHold) {
