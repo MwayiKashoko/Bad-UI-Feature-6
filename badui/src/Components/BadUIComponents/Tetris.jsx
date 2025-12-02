@@ -213,7 +213,12 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                         comparison--;
                     }
 
-                    return block == 0 || (j + currentCol - 1 >= 0 && grid[i + currentRow][j + currentCol - 1] == 0);
+                    return block == 0 ||
+                        (i + currentRow < grid.length &&
+                            grid[i + currentRow] != undefined &&
+                            j + currentCol - 1 >= 0 &&
+                            j + currentCol - 1 < grid[i + currentRow].length &&
+                            grid[i + currentRow][j + currentCol - 1] == 0);
                 }));
 
         } else if (direction == "right") {
