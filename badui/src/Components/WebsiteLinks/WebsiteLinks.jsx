@@ -91,7 +91,20 @@ const WebsiteLinks = () => {
             name: "TetrisMarathon",
             captcha: true,
             canLogin: true
-        }
+        },
+
+        {
+            name: "AlertEverySuccessfulOperation",
+            alternativeBirthday: true,
+            canLogin: true
+        },
+
+        {
+            name: "CompleteEasyMarioLevel",
+            captcha: true,
+            canLogin: true
+        },
+
     ]
 
     return (

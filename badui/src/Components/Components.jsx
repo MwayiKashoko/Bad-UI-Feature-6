@@ -61,6 +61,7 @@ const AuthRoutes = () => {
                 path="/user"
                 element={<ProtectedRoute element={Main} isAuthed={authorized} />}
             />
+
             <Route path="*" element={<Navigate to="/websites" replace />} />
         </Routes>
     );

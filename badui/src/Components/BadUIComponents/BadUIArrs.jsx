@@ -13,7 +13,7 @@ const errorComponents = {
 
     SecurePassword: {
         UiErrorPassword: badUI.ImpossiblePassword
-    }
+    },
 };
 
 const captchaObj = {
@@ -43,6 +43,10 @@ const captchaObj = {
 
     TetrisMarathon: {
         Captcha: badUI.TetrisGame
+    },
+
+    CompleteEasyMarioLevel: {
+        Captcha: badUI.MarioGame
     }
 }
 
@@ -53,6 +57,10 @@ const alternativeComponents = {
 
     BirthdayGuesser: {
         AlternativeBirthday: badUI.BirthdayGuesser
+    },
+
+    AlertEverySuccessfulOperation: {
+        AlternativeBirthday: badUI.AlertEveryOperation
     }
 };
 

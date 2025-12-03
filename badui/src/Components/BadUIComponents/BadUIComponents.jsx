@@ -2,8 +2,10 @@ import { useState, useRef, useEffect } from "react"
 import { generateRandomDate, generateRandomDateObject } from "../Scripts/BadUIScripts";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { random, expandBinomial, isAbleToAuthenticate, setIsAbleToAuthenticate } from "../Scripts/publicVars";
-import { tetrisCode } from "./Tetris";
+import { tetrisCode } from "./Tetris/Tetris";
 import * as math from "mathjs";
+import { marioCode } from "./Mario/Mario";
+import { PreloadAssets } from "./Mario/preloadAssets";
 
 export const BirthdayNeverAvailable = () => {
     return <span> ERROR: Birthday already in use. Please choose another</span>
@@ -351,6 +353,92 @@ export const TetrisGame = ({ user, ui }) => {
         {showCanvas && <>
             <canvas ref={canvasRef} width={600} height={600} style={{ backgroundColor: "black", marginRight: "20px" }}></canvas>
             <button onClick={() => alert('Use the left and right arrow keys to move the piece, the up arrow key to rotate the piece right, x to rotate the piece left, the down arrow key to drop the piece down faster, z to instantly drop a piece to the board, and shift to hold a piece to use for later.')}>Help</button> <br /> <br />
+        </>}
+    </>);
+}
+
+export const AlertEveryOperation = () => {
+    useEffect(() => {
+        const messages = {
+            click: "successfully clicked",
+            keydown: "successfully pressed a key",
+            keyup: "successfully released a key",
+            mousedown: "successfully pressed mouse",
+            mouseup: "successfully released mouse",
+            wheel: "successfully scrolled",
+        };
+
+        const handler = (e) => {
+            const msg = messages[e.type] || `successfully did ${e.type}`;
+            alert(msg);
+        };
+
+        const events = [];
+
+        for (const key in window) {
+            if (key.startsWith("on")) {
+                const ev = key.slice(2);
+                events.push(ev);
+                window.addEventListener(ev, handler);
+                document.addEventListener(ev, handler);
+            }
+        }
+
+        return () => {
+            for (const ev of events) {
+                window.removeEventListener(ev, handler);
+                document.removeEventListener(ev, handler);
+            }
+        };
+    }, []);
+}
+
+export const MarioGame = ({ user, ui }) => {
+    const canvasRef = useRef();
+    const [authFlag, setAuthFlag] = useState(isAbleToAuthenticate);
+
+    const [text, setText] = useState("");
+    const [showCanvas, setShowCanvas] = useState(true);
+    //1-1
+    //8-3
+    //D-1
+    //Own level I created
+    const [level, setLevel] = useState("1-1");
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setAuthFlag(isAbleToAuthenticate);
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        marioCode(canvas); // now canvas is defined
+    }, []);
+
+    useEffect(() => {
+        if (authFlag) {
+            //console.log(4);
+            setText("Verification successful You can sign in now!");
+            setShowCanvas(false);
+        }
+    }, [authFlag]);
+
+    useEffect(() => {
+        setText("Could not verify that you're a human. level 1-1 to verify you are not a robot.");
+    }, []);
+
+    PreloadAssets();
+
+    return (<>
+        <h2>{text}</h2>
+        {showCanvas && <>
+            <canvas ref={canvasRef} width={800} height={600} style={{ backgroundColor: "black", marginRight: "20px" }}></canvas>
+            <button onClick={() => alert('Left/Right arrow to move left/right. down to duck, z to run, x to shoot fireballs. Up to jump')}>Help</button> <br /> <br />
         </>}
     </>);
 }
