@@ -1228,7 +1228,6 @@ export const gameEngine = (canvas) => {
         ];
     }
 
-
     const draw = () => {
         drawHUD();
 

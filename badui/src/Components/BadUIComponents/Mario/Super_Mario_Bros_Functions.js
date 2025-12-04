@@ -119,26 +119,36 @@ Player.prototype = {
 	update: function (reset, canScroll, terrain, world) {
 		this.time++;
 
-		//Determines what conditions allow this.transition to be false
-		if (this.timeUntilNoTransition <= 0 && this.alive && !this.clearedLevel && !["walkingIntoPipe", "vine", "climbing vine", "cleared castle"].includes(this.transition) && !this.goingUpPipe) {
+		// Determine if transition can be reset
+		if (this.timeUntilNoTransition <= 0 &&
+			this.alive &&
+			!this.clearedLevel &&
+			!["walkingIntoPipe", "vine", "climbing vine", "cleared castle"].includes(this.transition) &&
+			!this.goingUpPipe
+		) {
 			this.transition = false;
 		}
 
-		//Is mario dead?
-		if (this.drawnY > height && this.transition != "climbing vine" && !this.clearedLevel) {
-			if (terrain != "Sky") {
+		// Check if Mario is dead (fell off screen)
+		const drawnYExceeds = this.drawnY > height;
+		const notClimbingVine = this.transition !== "climbing vine";
+		const terrainIsSky = terrain === "Sky";
+
+		if (drawnYExceeds && notClimbingVine && !this.clearedLevel) {
+			if (!terrainIsSky) {
 				if (this.alive) {
 					this.timeFromJump = 0;
 					this.lastGroundY = height;
 					this.die();
 				} else {
-					if (this.music.currentTime / this.music.duration >= .85) {
+					const musicProgress = this.music.currentTime / this.music.duration;
+					const gameOverSrc = `${pathname}/sounds/gameOver.wav`;
+
+					if (musicProgress >= 0.85) {
 						if (this.lives > 0) {
 							reset();
-						}
-
-						if (this.music.src.indexOf(`${pathname}/sounds/gameOver.wav`) == -1 && this.lives == 0) {
-							this.music.src = `${pathname}/sounds/gameOver.wav`;
+						} else if (!this.music.src.includes(gameOverSrc)) {
+							this.music.src = gameOverSrc;
 							this.music.play();
 							reset();
 						}

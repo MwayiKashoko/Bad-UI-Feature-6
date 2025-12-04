@@ -105,6 +105,11 @@ const WebsiteLinks = () => {
             canLogin: true
         },
 
+        {
+            name: "EasyPianoPieces",
+            captcha: true,
+            canLogin: true
+        },
     ]
 
     return (

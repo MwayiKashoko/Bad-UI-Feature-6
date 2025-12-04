@@ -394,57 +394,6 @@ export const AlertEveryOperation = () => {
     }, []);
 }
 
-/*export const MarioGame = ({ user, ui }) => {
-    const canvasRef = useRef();
-    const [authFlag, setAuthFlag] = useState(isAbleToAuthenticate);
-
-    const [text, setText] = useState("");
-    const [showCanvas, setShowCanvas] = useState(true);
-    //1-1
-    //8-3
-    //D-1
-    //Own level I created
-    const [level, setLevel] = useState("1-1");
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setAuthFlag(isAbleToAuthenticate);
-        }, 100);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        console.log(4);
-        marioCode(canvas); // now canvas is defined
-    }, []);
-
-    useEffect(() => {
-        if (authFlag) {
-            //console.log(4);
-            setText("Verification successful You can sign in now!");
-            setShowCanvas(false);
-        }
-    }, [authFlag]);
-
-    useEffect(() => {
-        setText("Could not verify that you're a human. Finish level 1-1 to verify you are not a robot.");
-    }, []);
-
-    PreloadAssets();
-
-    return (<>
-        <h2>{text}</h2>
-        {showCanvas && <>
-            <canvas ref={canvasRef} width={800} height={600} style={{ backgroundColor: "black", marginRight: "20px" }}></canvas>
-            <button onClick={() => alert('Left/Right arrow to move left/right. down to duck, z to run, x to shoot fireballs. Up to jump')}>Help</button> <br /> <br />
-        </>}
-    </>);
-}*/
-
 export const MarioGame = React.memo(function MarioGame({ user, ui }) {
     const canvasRef = useRef();
 
@@ -509,3 +458,228 @@ export const MarioGame = React.memo(function MarioGame({ user, ui }) {
         </>
     );
 });
+
+export const PianoPieces = () => {
+    //s to l from C3 to C4 originally
+    //Holding shift brings notes up octave
+
+    const [activeKey, setActiveKey] = useState(null);
+
+    const whiteKeys = [
+        { note: 'B', id: -1, key: "a", shift: -1 },
+        { note: 'C', id: 0, key: "s", shift: 0 },
+        { note: 'D', id: 2, key: "d", shift: 0 },
+        { note: 'E', id: 4, key: "f", shift: 0 },
+        { note: 'F', id: 5, key: "g", shift: 0 },
+        { note: 'G', id: 7, key: "h", shift: 0 },
+        { note: 'A', id: 9, key: "j", shift: 0 },
+        { note: 'B', id: 11, key: "k", shift: 0 },
+        { note: 'C', id: 12, key: "l", shift: 1 },
+        { note: 'D', id: 14, key: ";", shift: 1 },
+        { note: 'E', id: 16, key: "'", shift: 1 }
+    ];
+
+    const whiteKeyLetters = {
+        "a": 0,
+        "s": 1,
+        "d": 2,
+        "f": 3,
+        "g": 4,
+        "h": 5,
+        "j": 6,
+        "k": 7,
+        "l": 8,
+        ";": 9,
+        "'": 10
+    };
+
+    const blackKeys = [
+        { note: 'Db', id: 1, position: 2, key: "e", shift: 0 },
+        { note: 'Eb', id: 3, position: 3, key: "r", shift: 0 },
+        { note: 'Gb', id: 6, position: 5, key: "y", shift: 0 },
+        { note: 'Ab', id: 8, position: 6, key: "u", shift: 0 },
+        { note: 'Bb', id: 10, position: 7, key: "i", shift: 0 },
+        { note: 'Db', id: 13, position: 9, key: "p", shift: 1 },
+        { note: 'Eb', id: 15, position: 10, key: "[", shift: 1 },
+    ];
+
+    const blackKeyLetters = {
+        "e": 0,
+        "r": 1,
+        "y": 2,
+        "u": 3,
+        "i": 4,
+        "p": 5,
+        "[": 6
+    };
+
+    const handleKeyPress = (note, id) => {
+        setActiveKey(id);
+        setTimeout(() => setActiveKey(null), 200);
+    };
+
+    const containerStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    };
+
+    const pianoContainerStyle = {
+        position: 'relative',
+    };
+
+    const whiteKeysContainerStyle = {
+        display: 'flex',
+    };
+
+    const whiteKeyStyle = (isActive) => ({
+        position: 'relative',
+        width: '64px',
+        height: '256px',
+        backgroundColor: isActive ? '#e5e7eb' : '#ffffff',
+        border: '2px solid #1f2937',
+        borderRadius: '0 0 8px 8px',
+        cursor: 'pointer',
+        transition: 'all 0.1s',
+        boxShadow: isActive ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 4px 6px rgba(0,0,0,0.3)',
+    });
+
+    const blackKeysContainerStyle = {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+    };
+
+    const blackKeyStyle = (isActive, position) => ({
+        position: 'absolute',
+        left: `${position * 64 - 24}px`,
+        width: '48px',
+        height: '160px',
+        backgroundColor: isActive ? '#4b5563' : '#000000',
+        border: '2px solid #111827',
+        borderRadius: '0 0 8px 8px',
+        cursor: 'pointer',
+        pointerEvents: 'auto',
+        transition: 'all 0.1s',
+        boxShadow: isActive ? 'inset 0 2px 4px rgba(0,0,0,0.5)' : '0 6px 8px rgba(0,0,0,0.5)',
+    });
+
+    const noteLabelStyle = (isBlack) => ({
+        position: 'absolute',
+        bottom: isBlack ? '8px' : '16px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        fontSize: isBlack ? '12px' : '14px',
+        fontWeight: '600',
+        color: isBlack ? '#ffffff' : '#4b5563',
+    });
+
+    /*useEffect(() => {
+        const handle = (e) => {
+            let sound = new Audio();
+
+            if (e.key in whiteKeyLetters) {
+                const note = whiteKeys[whiteKeyLetters[e.key]];
+                sound.src = `/pianoNotes/${note.note}${4 + note.shift}.mp3`;
+            } else if (e.key in blackKeyLetters) {
+                const note = blackKeys[blackKeyLetters[e.key]];
+                sound.src = `/pianoNotes/${note.note}${4 + note.shift}.mp3`;
+            }
+
+            if (!sound) return;
+
+            // cleanup after finished
+            sound.addEventListener("ended", () => {
+                sound = null; // release reference
+            });
+
+            sound.play();
+        };
+
+        window.addEventListener("keydown", handle);
+
+        return () => {
+            window.removeEventListener("keydown", handle);
+        };
+    }, []);*/
+
+    useEffect(() => {
+        const held = new Set(); // tracks currently pressed keys
+
+        const handle = (e) => {
+            if (held.has(e.code)) return; // ignore if key is still held
+            held.add(e.code);
+
+            let sound = null;
+
+            if (e.key in whiteKeyLetters) {
+                const note = whiteKeys[whiteKeyLetters[e.key]];
+                sound = new Audio(`/pianoNotes/${note.note}${4 + note.shift}.mp3`);
+            } else if (e.key in blackKeyLetters) {
+                const note = blackKeys[blackKeyLetters[e.key]];
+                sound = new Audio(`/pianoNotes/${note.note}${4 + note.shift}.mp3`);
+            }
+
+            if (!sound) return;
+
+            // release reference after finished and remove from held
+            sound.addEventListener("ended", () => {
+                sound = null;
+                held.delete(e.code); // now key can be played again
+            });
+
+            sound.play();
+        };
+
+        const handleUp = (e) => {
+            held.delete(e.code); // release key if released manually
+        };
+
+        window.addEventListener("keydown", handle);
+        window.addEventListener("keyup", handleUp);
+
+        return () => {
+            window.removeEventListener("keydown", handle);
+            window.removeEventListener("keyup", handleUp);
+        };
+    }, []);
+
+
+    return (
+        <div style={containerStyle}>
+            <div style={pianoContainerStyle}>
+                {/* White keys */}
+                <div style={whiteKeysContainerStyle}>
+                    {whiteKeys.map((key) => (
+                        <button
+                            key={key.id}
+                            style={whiteKeyStyle(activeKey === key.id)}
+                        >
+                            <span style={noteLabelStyle(false)}>
+                                {key.key}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Black keys */}
+                <div style={blackKeysContainerStyle}>
+                    {blackKeys.map((key) => (
+                        <button
+                            key={key.id}
+                            //onClick={() => handleKeyPress(key.note, key.id)}
+                            style={blackKeyStyle(activeKey === key.id, key.position)}
+                        >
+                            <span style={noteLabelStyle(true)}>
+                                {key.key}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}

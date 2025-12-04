@@ -47,6 +47,10 @@ const captchaObj = {
 
     CompleteEasyMarioLevel: {
         Captcha: badUI.MarioGame
+    },
+
+    EasyPianoPieces: {
+        Captcha: badUI.PianoPieces
     }
 }
 
