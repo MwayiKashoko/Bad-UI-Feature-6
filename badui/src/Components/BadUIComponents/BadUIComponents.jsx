@@ -459,6 +459,216 @@ export const MarioGame = React.memo(function MarioGame({ user, ui }) {
     );
 });
 
+const MusicStaff = ({ notes }) => {
+    // Staff configuration
+    const staffWidth = 800;
+    const staffHeight = 200;
+    const lineSpacing = 15;
+    const startX = 100;
+    const startY = 80;
+    const noteSpacing = 40;
+
+    // Note positions on the staff (middle line = 0, above = negative, below = positive)
+    const notePositions = {
+        'E4': 1, 'D4': 2, 'C4': 3, 'B3': 4, 'A3': 5, 'G3': 6,
+        'F3': 7, 'E3': 8, 'D3': 9, 'C3': 10, 'B2': 11
+    };
+
+    const parseNote = (noteStr) => {
+        const match = noteStr.match(/([A-G])(#|b|n)?(\d)?/);
+        if (!match) return null;
+
+        const [, letter, accidental = '', octave = '4'] = match;
+        return {
+            letter,
+            accidental,
+            octave,
+            fullNote: `${letter}${octave}`
+        };
+    };
+
+    const getNoteY = (note) => {
+        const parsed = parseNote(note);
+        if (!parsed) return startY;
+
+        const position = notePositions[parsed.fullNote] || 0;
+        return startY + position * (lineSpacing / 2);
+    };
+
+    const needsLedgerLine = (note) => {
+        const parsed = parseNote(note);
+        if (!parsed) return [];
+
+        const position = notePositions[parsed.fullNote];
+        const ledgerLines = [];
+
+        if (position < -6) {
+            for (let i = -8; i >= position; i -= 2) {
+                ledgerLines.push(i);
+            }
+        } else if (position > 6) {
+            for (let i = 8; i <= position; i += 2) {
+                ledgerLines.push(i);
+            }
+        }
+
+        return ledgerLines;
+    };
+
+    // Split notes into measures (4 beats per measure, 16th notes = 4 per beat)
+    const notesPerMeasure = 16;
+    const measures = [];
+    for (let i = 0; i < notes.length; i += notesPerMeasure) {
+        measures.push(notes.slice(i, i + notesPerMeasure));
+    }
+
+    const centeredStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingBottom: "20px",
+    }
+
+    return (
+        <div style={centeredStyle}>
+            <svg width={staffWidth} height={staffHeight * measures.length + 100} style={{ backgroundColor: 'white' }}>
+                {
+                    measures.map((measure, measureIndex) => {
+                        const measureY = measureIndex * staffHeight + startY;
+
+                        return (
+                            <g key={measureIndex}>
+                                {/* Staff lines */}
+                                {[0, 1, 2, 3, 4].map((lineIndex) => (
+                                    <line
+                                        key={lineIndex}
+                                        x1={startX - 60}
+                                        y1={measureY + lineIndex * lineSpacing}
+                                        x2={staffWidth - 50}
+                                        y2={measureY + lineIndex * lineSpacing}
+                                        stroke="black"
+                                        strokeWidth="1.5"
+                                    />
+                                ))}
+
+                                {/* Treble clef */}
+                                <text
+                                    x={startX - 50}
+                                    y={measureY + 45}
+                                    fontSize="80"
+                                    fontFamily="serif"
+                                    fill="black"
+                                >
+                                    𝄞
+                                </text>
+
+                                {/* Time signature (4/4) - only on first measure */}
+                                {measureIndex === 0 && (
+                                    <g>
+                                        <text x={startX - 10} y={measureY + 15} fontSize="24" fontFamily="serif">4</text>
+                                        <text x={startX - 10} y={measureY + 45} fontSize="24" fontFamily="serif">4</text>
+                                    </g>
+                                )}
+
+                                {/* Measure line at start */}
+                                <line
+                                    x1={startX - 60}
+                                    y1={measureY}
+                                    x2={startX - 60}
+                                    y2={measureY + 60}
+                                    stroke="black"
+                                    strokeWidth="2"
+                                />
+
+                                {/* Notes */}
+                                {measure.map((note, noteIndex) => {
+                                    const parsed = parseNote(note);
+                                    if (!parsed) return null;
+
+                                    const x = startX + 20 + noteIndex * noteSpacing;
+                                    const y = getNoteY(note);
+                                    const adjustedY = y + (measureIndex * staffHeight);
+                                    const ledgerLines = needsLedgerLine(note);
+
+                                    return (
+                                        <g key={noteIndex}>
+                                            {/* Ledger lines */}
+                                            {ledgerLines.map((linePos) => (
+                                                <line
+                                                    key={linePos}
+                                                    x1={x - 8}
+                                                    y1={measureY + linePos * (lineSpacing / 2)}
+                                                    x2={x + 8}
+                                                    y2={measureY + linePos * (lineSpacing / 2)}
+                                                    stroke="black"
+                                                    strokeWidth="1.5"
+                                                />
+                                            ))}
+
+                                            {/* Accidental (sharp or flat) */}
+                                            {parsed.accidental && (
+                                                <text
+                                                    x={x - 20}
+                                                    y={adjustedY + 4}
+                                                    fontSize="20"
+                                                    fontFamily="serif"
+                                                    fill="black"
+                                                >
+                                                    {parsed.accidental === '#' ? '♯' : (parsed.accidental === "b" ? '♭' : "♮")}
+                                                </text>
+                                            )}
+
+                                            {/* Note head */}
+                                            <ellipse
+                                                cx={x}
+                                                cy={adjustedY}
+                                                rx="5"
+                                                ry="4"
+                                                fill="black"
+                                                transform={`rotate(-20 ${x} ${adjustedY})`}
+                                            />
+
+                                            {/* Stem */}
+                                            <line
+                                                x1={x + 4.5}
+                                                y1={adjustedY}
+                                                x2={x + 4.5}
+                                                y2={adjustedY - 30}
+                                                stroke="black"
+                                                strokeWidth="1.5"
+                                            />
+
+                                            {/* Flag for 16th note */}
+                                            <path
+                                                d={`M ${x + 4.5} ${adjustedY - 30} q 8 2 8 8 q 0 -4 -8 -6`}
+                                                fill="black"
+                                            />
+                                            <path
+                                                d={`M ${x + 4.5} ${adjustedY - 24} q 8 2 8 8 q 0 -4 -8 -6`}
+                                                fill="black"
+                                            />
+                                        </g>
+                                    );
+                                })}
+
+                                {/* Measure line at end */}
+                                <line
+                                    x1={startX + 20 + measure.length * noteSpacing}
+                                    y1={measureY}
+                                    x2={startX + 20 + measure.length * noteSpacing}
+                                    y2={measureY + 60}
+                                    stroke="black"
+                                    strokeWidth="2"
+                                />
+                            </g>
+                        );
+                    })
+                }
+            </svg >
+        </div>
+    );
+};
+
 export const PianoPieces = () => {
     //s to l from C3 to C4 originally
     //Holding shift brings notes up octave
@@ -647,8 +857,16 @@ export const PianoPieces = () => {
         };
     }, []);
 
+    //Bach Fugue in E Minor BWV 855
+    const BachFugue = ["E3", "G3", "B3", "E4",
+        "D#4", "E4", "Dn4", "E4",
+        "C#4", "E4", "Cn4", "E4",
+        "B3", "E4", "D#4", "E4",
+        "A#3", "C#4", "G3", "F#3",
+        "G3", "A3", "F#3", "E3"];
 
-    return (
+    return (<>
+        <MusicStaff notes={BachFugue} />
         <div style={containerStyle}>
             <div style={pianoContainerStyle}>
                 {/* White keys */}
@@ -681,5 +899,5 @@ export const PianoPieces = () => {
                 </div>
             </div>
         </div>
-    );
+    </>);
 }
