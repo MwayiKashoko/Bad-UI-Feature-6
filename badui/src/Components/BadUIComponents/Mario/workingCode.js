@@ -567,19 +567,13 @@ export const gameEngine = (canvas) => {
         //currentGame.musicLoop();
     }
 
-    // Initialize once
-    const waterImage = new Image();
-    waterImage.src = `${pathname}/images/WaterTop.png`;
-
     const setBackground = () => {
-        if (currentLocation.terrain === "Underwater") {
-            const waterY = standardHeight * 2;
-            const waterWidth = standardWidth;
-            const waterHeight = standardHeight;
-            const numTiles = Math.ceil(width / standardWidth);
+        if (currentLocation.terrain == "Underwater") {
+            let water = new Image();
+            water.src = `${pathname}/images/WaterTop.png`;
 
-            for (let i = 0; i < numTiles; i++) {
-                graphics.drawImage(waterImage, i * waterWidth, waterY, waterWidth, waterHeight);
+            for (let i = 0; i < 17; i++) {
+                graphics.drawImage(water, i * standardWidth, standardHeight * 2, standardWidth, standardHeight);
             }
 
             graphics.fillStyle = "#62adff";
@@ -587,10 +581,8 @@ export const gameEngine = (canvas) => {
         }
 
         if (currentLocation.background != null) {
-            const shouldScrollBackground = currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth;
-
             if (canUpdate) {
-                currentLocation.background.update(movingScreen, shouldScrollBackground, mario.velX);
+                currentLocation.background.update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX);
             }
 
             currentLocation.background.draw();
@@ -600,73 +592,66 @@ export const gameEngine = (canvas) => {
     const setCoins = () => {
         let coinList = mario.coinAnimationList;
 
-        for (let i = coinList.length - 1; i >= 0; i--) {
-            let coin = coinList[i];
-
-            // Animate coin sprite
-            coin.img.src = `${pathname}/images/CoinSpin${Math.floor(time / 4 % 4) + 1}.png`;
+        for (let i = 0; i < coinList.length; i++) {
+            coinList[i].img.src = `${pathname}/images/CoinSpin` + (Math.floor(time / 4 % 4) + 1) + ".png";
 
             if (canUpdate) {
-                // Move with screen scrolling
                 if (movingScreen && currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth) {
-                    coin.xValue -= mario.velX;
+                    coinList[i].xValue -= mario.velX;
                 }
 
-                // Animate vertical movement
-                coin.timeUntilDisappear++;
-                coin.yValue += (coin.timeUntilDisappear <= 25 ? -4 : 4);
+                coinList[i].timeUntilDisappear++;
 
-                // Remove coin after lifetime
-                if (coin.timeUntilDisappear >= 60) {
+                if (coinList[i].timeUntilDisappear <= 25) {
+                    coinList[i].yValue -= 4;
+                } else {
+                    coinList[i].yValue += 4;
+                }
+
+                if (coinList[i].timeUntilDisappear >= 60) {
                     coinList.splice(i, 1);
-                    continue; // Skip drawing this coin
                 }
             }
-
-            // Draw the coin
-            graphics.drawImage(coin.img, Math.round(coin.xValue), Math.round(coin.yValue), standardWidth / 2, standardHeight);
         }
-    };
+
+        for (let i = 0; i < coinList.length; i++) {
+            graphics.drawImage(coinList[i].img, Math.round(coinList[i].xValue), Math.round(coinList[i].yValue), standardWidth / 2, standardHeight);
+        }
+    }
 
     const setScores = () => {
         let scoreValues = mario.scoreValues;
 
-        graphics.fillStyle = "white";
-        graphics.font = "25px smb";
+        for (let i = 0; i < scoreValues.length; i++) {
+            scoreValues[i].timer++;
 
-        for (let i = scoreValues.length - 1; i >= 0; i--) {
-            let scoreObj = scoreValues[i];
-
-            // Update timer
-            scoreObj.timer++;
-
-            // Grant 1-Up if needed
-            if (scoreObj.has1Up) {
+            if (scoreValues[i].has1Up) {
                 sounds[0].currentTime = 0;
                 sounds[0].play();
                 mario.lives++;
-                scoreObj.has1Up = false;
+                scoreValues[i].has1Up = false;
             }
 
-            // Move with scrolling screen
             if (canUpdate && movingScreen && currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth) {
-                scoreObj.x -= mario.velX;
+                scoreValues[i].x -= mario.velX;
             }
 
-            // Float upwards
-            scoreObj.y -= 3;
+            scoreValues[i].y -= 3;
 
-            // Draw the score (skip 50-point coins if needed)
-            if (scoreObj.score !== 50) {
-                graphics.fillText(scoreObj.score, scoreObj.x + 18, scoreObj.y);
-            }
-
-            // Remove after timer ends
-            if (scoreObj.timer > 50) {
+            if (scoreValues[i].timer > 50) {
                 scoreValues.splice(i, 1);
             }
         }
-    };
+
+        graphics.fillStyle = "white";
+        graphics.font = "25px smb";
+
+        for (let i = 0; i < scoreValues.length; i++) {
+            if (scoreValues[i].score != 50) {
+                graphics.fillText(scoreValues[i].score, scoreValues[i].x + 18, scoreValues[i].y);
+            }
+        }
+    }
 
     const addPowerup = (x, y, type) => {
         powerups.push(new Powerup(x, y, type, gravity, music, sounds, currentLocation.terrain));
@@ -940,29 +925,14 @@ export const gameEngine = (canvas) => {
     const goBackwards = () => {
         let newX;
 
-        if (game === "smb" && currentLocation === currentGame.level8_4Castle) {
+        if (game == "smb" && currentLocation == currentGame.level8_4Castle) {
             timeUntilNextFish--;
 
             if (timeUntilNextFish <= 0) {
                 timeUntilNextFish = 50;
 
-                const fishCondition = currentLocation.area[10][198].drawnX <= 120 &&
-                    currentLocation.area[10][243].drawnX >= 600;
-
-                if (fishCondition) {
-                    currentLocation.enemies.push(
-                        new Enemy(
-                            random(100, width - shiftWidth * 4),
-                            height,
-                            standardWidth,
-                            standardHeight,
-                            "O",
-                            gravity,
-                            sounds,
-                            currentLocation.terrain,
-                            0
-                        )
-                    );
+                if (currentLocation.area[10][198].drawnX <= 120 && currentLocation.area[10][243].drawnX >= 600) {
+                    currentLocation.enemies.push(new Enemy(random(100, width - shiftWidth * 4), height, standardWidth, standardHeight, "O", gravity, sounds, currentLocation.terrain, 0))
                 }
             }
 
@@ -975,91 +945,69 @@ export const gameEngine = (canvas) => {
             }
         }
 
-        if (newX === undefined) return;
+        if (newX != undefined) {
+            newX -= 320;
 
-        newX -= 320;
+            currentLocation.area.forEach((row, j) => {
+                row.forEach((block, i, arr) => {
+                    const canEnter = block.canEnter;
+                    const isEdge = block.isEdge;
+                    let pair = arr[i].pair;
+                    let pulleyPair = arr[i].pulleyPair;
+                    let connection = arr[i].connection;
 
-        // Update blocks
-        for (let row of currentLocation.area) {
-            for (let i = 0; i < row.length; i++) {
-                const block = row[i];
-                const {
-                    canEnter,
-                    isEdge,
-                    pair,
-                    pulleyPair,
-                    connection,
-                    storedType,
-                    constantX,
-                    constantY,
-                    constantWidth,
-                    constantHeight,
-                    terrain
-                } = block;
+                    arr[i] = new Block(block.storedType, block.constantX, block.constantY, block.constantX, block.constantY, block.constantWidth, block.constantHeight, sounds, block.terrain);
 
-                row[i] = new Block(storedType, constantX, constantY, constantX, constantY, constantWidth, constantHeight, sounds, terrain);
+                    arr[i].drawnX -= newX;
+                    arr[i].movingX -= newX;
 
-                const newBlock = row[i];
-                newBlock.drawnX -= newX;
-                newBlock.movingX -= newX;
+                    arr[i].fireBar.forEach((fireball, k, array) => {
+                        array[k].drawnX -= newX;
+                        array[k].centerX -= newX;
+                    });
 
-                // Update firebars
-                if (newBlock.fireBar) {
-                    for (let fire of newBlock.fireBar) {
-                        fire.drawnX -= newX;
-                        fire.centerX -= newX;
+                    arr[i].canEnter = canEnter;
+                    arr[i].isEdge = isEdge;
+
+                    arr[i].pair = pair;
+                    arr[i].pulleyPair = pulleyPair;
+
+                    if (arr[i].pulleyPair != null) {
+                        arr[i].pulleyPair.pulleyPair = arr[i];
                     }
+
+                    arr[i].connection = connection;
+                });
+            });
+
+            if (currentLocation.background != null) {
+                currentLocation.background = new Background(currentLocation.background.img.src, currentLocation.background.constantX, currentLocation.background.constantY, currentLocation.background.width, currentLocation.background.height);
+                currentLocation.background.drawnX -= newX;
+            }
+
+            let canResetEnemy = true;
+            currentLocation.enemies.forEach((enemy, i, arr) => {
+                if (canResetEnemy) {
+                    arr[i] = new Enemy(enemy.constantX, enemy.constantY, enemy.constantWidth, enemy.constantHeight, enemy.storedType, gravity, sounds, enemy.terrain, enemy.animated);
                 }
 
-                newBlock.canEnter = canEnter;
-                newBlock.isEdge = isEdge;
-                newBlock.pair = pair;
-                newBlock.pulleyPair = pulleyPair;
-                if (newBlock.pulleyPair) newBlock.pulleyPair.pulleyPair = newBlock;
-                newBlock.connection = connection;
+                if (arr[i].drawnX == -1000) {
+                    canResetEnemy = false;
+                    currentLocation.enemies.length = i + 1;
+                }
+            });
+
+            for (let i = 0; i < currentLocation.enemies.length; i++) {
+                let enemy = currentLocation.enemies[i];
+
+                if (enemy.drawnX != 1000) {
+                    enemy.drawnX -= newX;
+                    enemy.hitboxX -= newX;
+                }
             }
         }
+    }
 
-        // Update background
-        if (currentLocation.background) {
-            const bg = currentLocation.background;
-            currentLocation.background = new Background(bg.img.src, bg.constantX, bg.constantY, bg.width, bg.height);
-            currentLocation.background.drawnX -= newX;
-        }
-
-        // Reset enemies if needed
-        let canResetEnemy = true;
-        for (let i = 0; i < currentLocation.enemies.length; i++) {
-            const enemy = currentLocation.enemies[i];
-
-            if (canResetEnemy) {
-                currentLocation.enemies[i] = new Enemy(
-                    enemy.constantX,
-                    enemy.constantY,
-                    enemy.constantWidth,
-                    enemy.constantHeight,
-                    enemy.storedType,
-                    gravity,
-                    sounds,
-                    enemy.terrain,
-                    enemy.animated
-                );
-            }
-
-            if (currentLocation.enemies[i].drawnX === -1000) {
-                canResetEnemy = false;
-                currentLocation.enemies.length = i + 1;
-            }
-        }
-
-        // Shift enemies left
-        for (let enemy of currentLocation.enemies) {
-            if (enemy.drawnX !== 1000) {
-                enemy.drawnX -= newX;
-                enemy.hitboxX -= newX;
-            }
-        }
-    };
 
     const addDebris = (objects) => {
         for (let i = 0; i < objects.length; i++) {
@@ -1068,35 +1016,28 @@ export const gameEngine = (canvas) => {
     }
 
     const setDebris = () => {
-        for (let i = debris.length - 1; i >= 0; i--) {
-            let piece = debris[i];
-
-            // Animate debris sprite
-            const terrain = currentLocation.terrain !== "Bonus" ? currentLocation.terrain : "Underground";
-            piece.img.src = `${pathname}/images/${terrain}BrokenBrick${(Math.floor(time / 10) % 4) + 1}.png`;
+        for (let i = 0; i < debris.length; i++) {
+            debris[i].img.src = `${pathname}/images/${currentLocation.terrain != "Bonus" ? currentLocation.terrain : "Underground"}BrokenBrick${(Math.floor(time / 10)) % 4 + 1}.png`;
 
             if (canUpdate) {
-                // Move with scrolling screen
                 if (currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth) {
-                    piece.x -= mario.velX;
+                    debris[i].x -= mario.velX;
                 }
 
-                // Apply physics
-                piece.x += piece.velX;
-                piece.time++;
-                piece.y = piece.originalY - 2 * piece.time + 0.5 * gravity * piece.time ** 2;
+                debris[i].x += debris[i].velX;
+                debris[i].time++;
+                debris[i].y = debris[i].originalY - 2 * debris[i].time + 0.5 * gravity * debris[i].time ** 2;
 
-                // Remove if off-screen
-                if (piece.y > height) {
+                if (debris[i].y > height) {
                     debris.splice(i, 1);
-                    continue; // Skip drawing
                 }
             }
 
-            // Draw debris
-            graphics.drawImage(piece.img, Math.round(piece.x), Math.round(piece.y), 20, 20);
+            if (i < debris.length) {
+                graphics.drawImage(debris[i].img, Math.round(debris[i].x), Math.round(debris[i].y), 20, 20)
+            }
         }
-    };
+    }
 
     const setFireworks = () => {
         if (fireworks.length > 0) {
@@ -1117,146 +1058,49 @@ export const gameEngine = (canvas) => {
         }
     }
 
-    // HUD images (preload once)
-    const hudCoins = [
-        new Image(),
-        new Image(),
-        new Image()
-    ];
-    hudCoins[0].src = `${pathname}/images/hudCoin1.png`;
-    hudCoins[1].src = `${pathname}/images/hudCoin2.png`;
-    hudCoins[2].src = `${pathname}/images/hudCoin3.png`;
-
-    // "X" image, assumed static
-    const xImage = new Image();
-    xImage.src = `${pathname}/images/xImage.png`;
-
-    // Font and color
-    const HUD_FONT = "25px smb";
-    const HUD_COLOR = "white";
-
-    // Precompute constant positions
-    const POS = {
-        marioText: [100, 30],
-        score: [110, 50],
-        coin: [220, 32, 20, 20],
-        xImage: [237, 32, 20, 20],
-        coinsText: [275, 50],
-        worldText: [400, 30],
-        levelText: [400, 50],
-        timeText: [550, 30],
-        gameTimeText: [555, 50],
-    };
-
-    // Reuse to avoid allocations every frame
-    function padNumber(num, length) {
-        let str = num.toString();
-        while (str.length < length) str = "0" + str;
-        return str;
-    }
-
-    function drawHUD() {
-        // Clear the canvas
+    const draw = () => {
         graphics.clearRect(0, 0, width, height);
+        graphics.fillStyle = "white";
 
-        // Set font and color (can be skipped if already set)
-        graphics.fillStyle = HUD_COLOR;
-        graphics.font = HUD_FONT;
-
-        // Static text
-        graphics.fillText("MARIO", ...POS.marioText);
-
-        // Only format numbers each frame
-        const formattedScore = padNumber(score, 6);
-        graphics.fillText(formattedScore, ...POS.score);
-
-        // Coin animation index (0-2)
-        let coinAnimIndex;
+        //draws the text to the screen
+        graphics.font = "25px smb";
+        graphics.fillText("MARIO", 100, 30);
+        graphics.fillText(("00000" + score).slice(-6), 110, 50);
+        const coinImageNumber = Math.floor(time % 50 / 10) + 1;
 
         if (state != "loading") {
-            coinAnimIndex = Math.floor(time % 50 / 10);
-        } else {
-            coinAnimIndex = 0;
+            currentGame.hudCoin.src = `${pathname}/images/hudCoin${coinImageNumber > 3 ? (coinImageNumber == 4 ? 2 : 1) : coinImageNumber}.png`;
+        } else if (currentGame.hudCoin.src.indexOf(`${pathname}/images/hudCoin1.png`) == -1) {
+            currentGame.hudCoin.src = `${pathname}/images/hudCoin1.png`;
         }
 
-        const coinImageIndex = coinAnimIndex > 2 ? (coinAnimIndex === 3 ? 1 : 0) : coinAnimIndex;
-
-        graphics.drawImage(hudCoins[coinImageIndex], ...POS.coin);
-        graphics.drawImage(xImage, ...POS.xImage);
-
-        // Coins text
-        const formattedCoins = padNumber(mario.coins, 2);
-        graphics.fillText(formattedCoins, ...POS.coinsText);
-
-        // World and level
-        graphics.fillText("WORLD", ...POS.worldText);
-        graphics.fillText(level, ...POS.levelText);
-
-        // Time
-        graphics.fillText("TIME", ...POS.timeText);
-        const formattedTime = padNumber(gameTime, 3);
-        graphics.fillText(formattedTime, ...POS.gameTimeText);
-    }
-
-    // preload this outside the frame loop
-    const smallMarioImage = new Image();
-    smallMarioImage.src = `${pathname}/images/smallMarioStanding.png`;
-    let currentMusicTrack = "";
-
-    // Outside the loop
-    let lastBackgroundColor = "";
-
-    // Preload firework images once
-    const fireworkImages = [];
-    for (let i = 0; i < 3; i++) { // or however many variations you want
-        const img = new Image();
-        img.src = `${pathname}/images/firework${i}.png`; // replace with your actual paths
-        fireworkImages.push(img);
-    }
-
-    function generateDebris(block) {
-        const width = block.width;
-        const height = block.height;
-        const x = block.drawnX;
-        const y = block.drawnY;
-
-        return [
-            { img: new Image(), x, y, originalY: y, time: 0, velX: -2 },
-            { img: new Image(), x: x + width, y, originalY: y, time: 0, velX: 2 },
-            { img: new Image(), x, y: y + height, originalY: y + height, time: 0, velX: -2 },
-            { img: new Image(), x: x + width, y: y + height, originalY: y + height, time: 0, velX: 2 },
-        ];
-    }
-
-
-    const draw = () => {
-        drawHUD();
+        graphics.drawImage(currentGame.hudCoin, 220, 32, 20, 20);
+        graphics.drawImage(currentGame.xImage, 237, 32, 20, 20)
+        graphics.fillText("" + ("0" + mario.coins).slice(-2), 275, 50);
+        graphics.fillText("WORLD", 400, 30);
+        graphics.fillText(level, 400, 50)
+        graphics.fillText("TIME", 550, 30);
+        graphics.fillText(("00" + gameTime).slice(-3), 555, 50);
 
         if (state == "loading") {
-            // Only change music if necessary
-            // Outside the loop
-
-            // Inside your frame loop (loading screen)
+            //What to do when on the loading screen
             if (mario.lives > 0) {
-                let desiredMusic = `${pathname}/sounds/${currentLocation.terrain}.wav`;
-                if (currentLocation == currentGame.level1_2Overworld1) {
-                    desiredMusic = `${pathname}/sounds/overworldToUnderground.wav`;
-                }
+                music.src = `${pathname}/sounds/${currentLocation.terrain}.wav`;
 
-                if (currentMusicTrack !== desiredMusic) {
-                    music.src = desiredMusic;
-                    currentMusicTrack = desiredMusic;
+                if (currentLocation == currentGame.level1_2Overworld1) {
+                    music.src = `${pathname}/sounds/overworldToUnderground.wav`
                 }
             }
 
-            // Only set background if not already black
-            if (canvas.style.background !== "black") {
+            if (canvas.style.background != "black") {
                 canvas.style.background = "black";
             }
 
             if (mario.lives > 0) {
+                let smallMario = new Image();
+                smallMario.src = `${pathname}/images/smallMarioStanding.png`;
                 graphics.fillText(`world ${level}`, width / 2 - shiftWidth, 200);
-                graphics.drawImage(smallMarioImage, width / 2 - 75 - shiftWidth, 240, standardWidth, standardHeight);
+                graphics.drawImage(smallMario, width / 2 - 75 - shiftWidth, 240, standardWidth, standardHeight);
                 graphics.drawImage(currentGame.xImage, width / 2 - shiftWidth, 250, 20, 20);
                 graphics.fillText(mario.lives, 460 - shiftWidth, 270);
             } else {
@@ -1264,14 +1108,18 @@ export const gameEngine = (canvas) => {
             }
 
             timeUntilPlay--;
-            if (timeUntilPlay == 0 && mario.lives > 0) {
-                state = "game";
+
+            if (timeUntilPlay == 0) {
+                if (mario.lives > 0) {
+                    state = "game";
+                }
             }
         } else if (state == "game") {
-            const desiredBackground = currentLocation.color ?? "black";
-            if (lastBackgroundColor !== desiredBackground) {
-                canvas.style.background = desiredBackground;
-                lastBackgroundColor = desiredBackground;
+            //What to do if the actual game is running
+            if (currentLocation.color != undefined) {
+                canvas.style.background = currentLocation.color;
+            } else {
+                canvas.style.background = "black";
             }
 
             isHittingLeft = false;
@@ -1293,44 +1141,47 @@ export const gameEngine = (canvas) => {
 
             let possibleToNotScroll = true;
 
-            // Check if any block is a Flagpole
-            possibleToNotScroll = !currentLocation.area.some(row =>
-                row.some(block => block.type === "Flagpole")
-            );
+            currentLocation.area.forEach((row) => {
+                row.forEach((block, i, arr) => {
+                    if (block.type == "Flagpole") {
+                        possibleToNotScroll = false;
+                    }
+                });
+            });
 
-            // Cache last row and last block for efficiency
-            const lastRow = currentLocation.area[currentLocation.area.length - 1];
-            const lastBlock = lastRow[lastRow.length - 1];
-
-            // Determine if scrolling is allowed
-            if (lastBlock.drawnX <= 600 && possibleToNotScroll) {
+            if (currentLocation.area[currentLocation.area.length - 1][currentLocation.area[currentLocation.area.length - 1].length - 1].drawnX <= 600 && possibleToNotScroll) {
                 currentLocation.canScroll = false;
 
-                // Only handle game-specific logic if needed
-                if (game === "smb" && level === "1-2") {
-                    if (currentLocation === currentGame.level1_2Overworld1) {
-                        mario.canClearLevel = false;
-                        if (!["into pipe", "pipe"].includes(mario.transition)) {
-                            mario.transition = "walkingIntoPipe";
-                        }
-                    } else if (currentLocation === currentGame.level1_2Underground1) {
-                        graphics.fillStyle = "white";
-                        graphics.fillText("Welcome to warp zone!", 280, 240);
-                        graphics.fillText("8-2", 120, 340);
-                        graphics.fillText("8-1", 280, 340);
-                        graphics.fillText("1-4", 440, 340);
+                if (game == "smb") {
+                    switch (level) {
+                        case "1-2":
+                            if (currentLocation == currentGame.level1_2Overworld1) {
+                                mario.canClearLevel = false;
 
-                        // Update enemies efficiently
-                        for (let i = 0; i < currentLocation.enemies.length; i++) {
-                            currentLocation.enemies[i].drawnX = -100;
-                        }
+                                if (!["into pipe", "pipe"].includes(mario.transition)) {
+                                    mario.transition = "walkingIntoPipe";
+                                }
+                            } else if (currentLocation == currentGame.level1_2Underground1) {
+                                graphics.fillStyle = "white";
+                                graphics.fillText("Welcome to warp zone!", 280, 240);
+                                graphics.fillText("8-2", 120, 340);
+                                graphics.fillText("8-1", 280, 340);
+                                graphics.fillText("1-4", 440, 340);
+
+                                currentLocation.enemies.forEach((val, i, arr) => {
+                                    arr[i].drawnX = -100;
+                                });
+                            }
+
+                            break;
+                        default:
+                            break;
                     }
                 }
             } else {
                 currentLocation.canScroll = true;
             }
 
-            // Reset standing state
             isStanding = false;
 
             setBackground();
@@ -1339,509 +1190,466 @@ export const gameEngine = (canvas) => {
                 mario.draw();
             }
 
-            const numRows = currentLocation.area.length;
-            const shouldScroll = movingScreen && currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth && canUpdate;
+            currentLocation.area.forEach((row, j) => {
+                row.forEach((block, i, arr) => {
+                    if (block.type != "Air") {
+                        if (canUpdate) {
+                            arr[i].update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX, mario.drawnX + mario.width / 2);
 
-            for (let j = 0; j < numRows; j++) {
-                const row = currentLocation.area[j];
-                const numCols = row.length;
-
-                for (let i = 0; i < numCols; i++) {
-                    const block = row[i];
-                    if (!block) continue;
-
-                    // Precompute neighbors
-                    const topBlock = j > 0 ? currentLocation.area[j - 1][i] : null;
-                    const bottomBlock = j + 1 < numRows ? currentLocation.area[j + 1][i] : null;
-                    const leftBlock = i > 0 ? row[i - 1] : null;
-                    const rightBlock = i + 1 < numCols ? row[i + 1] : null;
-
-                    // Skip Air blocks unless scrolling
-                    if (block.type === "Air") {
-                        if (shouldScroll) {
-                            block.drawnX -= mario.velX;
-                        }
-                        continue;
-                    }
-
-                    // Update block if allowed
-                    if (canUpdate) {
-                        block.update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX, mario.drawnX + mario.width / 2);
-
-                        // Add bullets to enemies
-                        for (let b = 0; b < block.bullets.length; b++) {
-                            const bullet = block.bullets[b];
-                            if (!bullet.addedToEnemies) {
-                                bullet.addedToEnemies = true;
-                                currentLocation.enemies.push(bullet);
-                            }
-                        }
-                    }
-
-                    // Cache block type flags
-                    const isCoin = block.type.includes("Coin");
-                    const isFlagpole = block.type.includes("Flagpole");
-                    const isCastle = block.type === "Castle" || block.type === "BigCastle";
-                    const isAxe = block.type === "Axe";
-                    const isCannon = block.type.includes("Cannon");
-                    const isVine = block.vineStructure != null || block.type.includes("Vine");
-
-                    // Block interactions
-                    if (isCoin) {
-                        block.collides(mario);
-                    } else if (isFlagpole) {
-                        if (mario.transition === "cleared level") {
-                            if (block.offsetY + 79 + block.drawnY < 460) {
-                                block.offsetY += 5;
-                            } else {
-                                mario.canGoToCastle = true;
-                            }
-                        }
-
-                        if (mario.clearedLevel && fireworks.length === 0 && !mario.behindCastle) {
-                            const fireworkNumber = gameTime % 10;
-                            if ([1, 3, 6].includes(fireworkNumber)) {
-                                for (let f = 0; f < fireworkNumber; f++) {
-                                    fireworks.push({
-                                        x: random(320, 720),
-                                        y: random(120, 200),
-                                        img: fireworkImages[f % fireworkImages.length], // preloaded images
-                                        existence: 0
-                                    });
-                                }
-                            }
-                        }
-                    } else if (isCastle) {
-                        if (i > 10 && block.drawnX + block.width >= 0 && block.drawnX < newWidth) {
-                            mario.canClearLevel = true;
-                        }
-                        if (block.castleCollisions(mario, gameTime, fireworks)) {
-                            mario.timeToMoveToNextLevel++;
-                            if (mario.timeToMoveToNextLevel >= 150) {
-                                canGoToNextLevel = true;
-                            }
-                        }
-                    } else if (isAxe) {
-                        block.collides(mario);
-                    } else {
-                        // Top/Bottom/Left/Right collisions for Mario
-                        if (!mario.goingUpPipe && canUpdate) {
-                            let cantShoot = false;
-
-                            // Top collisions
-                            if (topBlock && !topBlock.hasCollisions && block.topCollisions(mario)) {
-                                isStanding = true;
-                                if (isCannon) cantShoot = true;
-                            }
-
-                            // Bottom collisions
-                            if (bottomBlock && (!bottomBlock.hasCollisions || bottomBlock.type === "Air") && block.bottomCollisions(mario, addPowerup, addEnemy)) {
-                                if (block.bumping > 0 && topBlock && topBlock.type === "Coin") {
-                                    topBlock.type = "Air";
-                                    mario.addCoin(block.drawnX + 10, block.drawnY - standardHeight);
-                                    mario.coins++;
-                                }
-
-                                if (block.type === "Air") {
-                                    addDebris(generateDebris(block)); // precreate debris images
-                                }
-                            }
-
-                            // Vine collisions
-                            if (isVine) block.vineCollisions(mario);
-
-                            // Left collisions
-                            if (!mario.clearedLevel && leftBlock && (!leftBlock.hasCollisions || leftBlock.type === "Air") && block.leftCollisions(mario)) {
-                                isHittingLeft = true;
-                                if (isCannon) cantShoot = true;
-                            }
-
-                            // Right collisions
-                            if (!mario.clearedLevel && rightBlock && (!rightBlock.hasCollisions || rightBlock.type === "Air") && block.rightCollisions(mario)) {
-                                isHittingRight = true;
-                                if (isCannon) cantShoot = true;
-                            }
-
-                            // Cannon cooldown
-                            if (cantShoot) {
-                                for (let k = 0; k < numRows; k++) {
-                                    currentLocation.area[k][i].timeToShootBullet = 100;
-                                }
-                            }
-                        }
-
-                        // Enemies collisions
-                        if (currentLocation.enemies) {
-                            for (let e = 0; e < currentLocation.enemies.length; e++) {
-                                const enemy = currentLocation.enemies[e];
-                                enemy.isStanding = false;
-
-                                if (enemy.collisions && enemy.affectedByGravity) {
-                                    if (topBlock && (!topBlock.hasCollisions || topBlock.type === "Air") && block.topCollisions(enemy, mario)) {
-                                        enemy.isStanding = true;
+                            if (arr[i].bullets.length > 0) {
+                                arr[i].bullets.forEach((bullet, k, bullets) => {
+                                    if (currentLocation.enemies.indexOf(bullets[k]) == -1) {
+                                        currentLocation.enemies.push(bullets[k]);
                                     }
-                                    if (leftBlock && !leftBlock.hasCollisions && block.leftCollisions(enemy)) {
-                                        enemy.directionFacing = "left";
-                                    } else if (rightBlock && !rightBlock.hasCollisions && block.rightCollisions(enemy)) {
-                                        enemy.directionFacing = "right";
+                                });
+                            }
+                        }
+
+                        if (block.type.indexOf("Coin") > -1) {
+                            arr[i].collides(mario);
+                        } else if (block.type.indexOf("Flagpole") > -1) {
+                            if (mario.transition == "cleared level") {
+                                if (block.offsetY + 79 + block.drawnY < 460) {
+                                    block.offsetY += 5;
+                                } else {
+                                    mario.canGoToCastle = true;
+                                }
+                            }
+
+                            if (mario.clearedLevel && fireworks.length == 0 && !mario.behindCastle) {
+                                const fireworkNumber = gameTime % 10;
+
+                                if (fireworkNumber == 1 || fireworkNumber == 3 || fireworkNumber == 6) {
+                                    for (let i = 0; i < fireworkNumber; i++) {
+                                        fireworks.push({
+                                            x: random(320, 720),
+                                            y: random(120, 200),
+                                            img: new Image(),
+                                            existence: 0
+                                        });
                                     }
                                 }
                             }
-                        }
-
-                        // Powerups collisions
-                        for (let p = 0; p < powerups.length; p++) {
-                            const powerup = powerups[p];
-                            if ((leftBlock && !leftBlock.hasCollisions && block.leftCollisions(powerup)) || (rightBlock && !rightBlock.hasCollisions && block.rightCollisions(powerup))) {
-                                powerup.velX *= -1;
+                        } else if (block.type == "Castle" || block.type == "BigCastle") {
+                            if (i > 10 && block.drawnX + block.width >= 0 && block.drawnX < newWidth) {
+                                mario.canClearLevel = true;
                             }
-                            if (bottomBlock && !bottomBlock.hasCollisions && block.bottomCollisions(powerup)) powerup.hitBlock = true;
-                            if (topBlock && !topBlock.hasCollisions && powerup.risen && !block.topCollisions(powerup)) powerup.condition = true;
-                        }
 
-                        // Fireballs collisions
-                        for (let f = fireballs.length - 1; f >= 0; f--) {
-                            const fireball = fireballs[f];
-                            if ((leftBlock && !leftBlock.hasCollisions && block.leftCollisions(fireball)) ||
-                                (rightBlock && !rightBlock.hasCollisions && block.rightCollisions(fireball)) ||
-                                (bottomBlock && !bottomBlock.hasCollisions && block.bottomCollisions(fireball))) {
-                                sounds[1].currentTime = 0;
-                                sounds[1].play();
-                                fireballs.splice(f, 1);
-                                continue;
+                            if (arr[i].castleCollisions(mario, gameTime, fireworks)) {
+                                mario.timeToMoveToNextLevel++;
+
+                                if (mario.timeToMoveToNextLevel >= 150) {
+                                    canGoToNextLevel = true;
+                                }
                             }
-                            if (topBlock && !topBlock.hasCollisions && block.topCollisions(fireball)) { }
+                        } else if (block.type == "Axe") {
+                            arr[i].collides(mario);
+                        } else {
+                            if (!mario.goingUpPipe) {
+                                if (canUpdate) {
+                                    //Top collisions for mario
+                                    let cantShoot = false;
+                                    if ((j - 1 > 0 && !currentLocation.area[j - 1][i].hasCollisions && arr[i].topCollisions(mario))) {
+                                        isStanding = true;
+
+                                        if (block.type.indexOf("Cannon") > -1) {
+                                            cantShoot = true;
+                                        }
+                                    }
+
+                                    const currentBrick = arr[i];
+
+                                    //Bottom collisions for Mario
+                                    if (j + 1 < currentLocation.area.length && (!currentLocation.area[j + 1][i].hasCollisions || currentLocation.area[j + 1][i].type == "Air") && arr[i].bottomCollisions(mario, addPowerup, addEnemy)) {
+                                        if (block.bumping > 0 && j - 1 >= 0 && currentLocation.area[j - 1][i].type == "Coin") {
+                                            currentLocation.area[j - 1][i].type = "Air";
+                                            mario.addCoin(block.drawnX + 10, block.drawnY - standardHeight);
+                                            mario.coins++;
+                                        }
+
+                                        if (block.type == "Air") {
+                                            addDebris([{
+                                                img: new Image(),
+                                                x: currentBrick.drawnX,
+                                                y: currentBrick.drawnY,
+                                                originalY: currentBrick.drawnY,
+                                                time: 0,
+                                                velX: -2,
+                                            },
+                                            {
+                                                img: new Image(),
+                                                x: currentBrick.drawnX + currentBrick.width,
+                                                y: currentBrick.drawnY,
+                                                originalY: currentBrick.drawnY,
+                                                time: 0,
+                                                velX: 2,
+                                            },
+                                            {
+                                                img: new Image(),
+                                                x: currentBrick.drawnX,
+                                                y: currentBrick.drawnY + currentBrick.height,
+                                                originalY: currentBrick.drawnY + currentBrick.height,
+                                                time: 0,
+                                                velX: -2,
+                                            },
+                                            {
+                                                img: new Image(),
+                                                x: currentBrick.drawnX + currentBrick.width,
+                                                y: currentBrick.drawnY + currentBrick.height,
+                                                originalY: currentBrick.drawnY + currentBrick.height,
+                                                time: 0,
+                                                velX: 2,
+                                            }]);
+                                        }
+                                    }
+
+                                    //Vine collisions
+                                    (block.vineStructure != null || block.type.indexOf("Vine") > -1) && arr[i].vineCollisions(mario);
+
+                                    //Left collisions
+                                    if (!mario.clearedLevel && i - 1 > 0 && (!row[i - 1].hasCollisions || row[i - 1].type == "Air") && arr[i].leftCollisions(mario)) {
+                                        isHittingLeft = true;
+
+                                        if (block.type.indexOf("Cannon") > -1) {
+                                            cantShoot = true;
+                                        }
+                                    }
+
+                                    //Right collisions
+                                    if (!mario.clearedLevel && i + 1 < row.length && (!row[i + 1].hasCollisions || row[i + 1].type == "Air") && arr[i].rightCollisions(mario)) {
+                                        isHittingRight = true;
+
+                                        if (block.type.indexOf("Cannon") > -1) {
+                                            cantShoot = true;
+                                        }
+                                    }
+
+                                    if (cantShoot) {
+                                        currentLocation.area.forEach((column, k, blocks) => {
+                                            blocks[k][i].timeToShootBullet = 100;
+                                        });
+                                    }
+                                }
+                            }
+
+                            //Block collisions for enemies
+                            if (currentLocation.enemies != undefined) {
+                                currentLocation.enemies.forEach((enemy, k, enemies) => {
+                                    enemies[k].isStanding = false;
+
+                                    if (enemy.collisions && enemy.affectedByGravity) {
+                                        if (j - 1 > 0 && (!currentLocation.area[j - 1][i].hasCollisions || currentLocation.area[j - 1][i].type == "Air") && arr[i].topCollisions(enemies[k], mario)) {
+                                            enemies[k].isStanding = true;
+                                        }
+
+                                        if (i - 1 > 0 && !row[i - 1].hasCollisions && arr[i].leftCollisions(enemies[k])) {
+                                            enemies[k].directionFacing = "left";
+                                        } else if (i + 1 < row.length && !row[i + 1].hasCollisions && arr[i].rightCollisions(enemies[k])) {
+                                            enemies[k].directionFacing = "right";
+                                        }
+                                    }
+                                });
+                            }
+
+                            //Block collisions for powerups
+                            powerups.forEach((powerup, k) => {
+                                if ((i - 1 > 0 && !row[i - 1].hasCollisions && arr[i].leftCollisions(powerups[k])) || (i + 1 < row.length && !row[i + 1].hasCollisions && arr[i].rightCollisions(powerups[k]))) {
+                                    powerups[k].velX *= -1;
+                                }
+
+                                if (j + 1 < currentLocation.area.length && !currentLocation.area[j + 1][i].hasCollisions && arr[i].bottomCollisions(powerups[k])) {
+                                    powerups[k].hitBlock = true;
+                                }
+
+                                if (j - 1 > 0 && !currentLocation.area[j - 1][i].hasCollisions && powerups[k].risen && !arr[i].topCollisions(powerups[k])) {
+                                    powerups[k].condition = true;
+                                }
+                            });
+
+                            //Block collisions for fireballs
+                            for (let k = 0; k < fireballs.length; k++) {
+                                if ((i - 1 > 0 && !row[i - 1].hasCollisions && arr[i].leftCollisions(fireballs[k])) || (i + 1 < row.length && !row[i + 1].hasCollisions && arr[i].rightCollisions(fireballs[k])) || (j + 1 < currentLocation.area.length && !currentLocation.area[j + 1][i].hasCollisions && arr[i].bottomCollisions(fireballs[k]))) {
+                                    sounds[1].currentTime = 0;
+                                    sounds[1].play();
+                                    fireballs.splice(k, 1);
+                                    continue;
+                                }
+
+                                if (j - 1 > 0 && !currentLocation.area[j - 1][i].hasCollisions && arr[i].topCollisions(fireballs[k]));
+                            }
                         }
+                    } else if (movingScreen && currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth && canUpdate) {
+                        arr[i].drawnX -= mario.velX;
                     }
-                }
-            }
+                });
+            });
 
-            // Determine if Mario is falling
-            const canFall = !isStanding && !mario.isJumping && !mario.transition && !mario.clearedLevel && !mario.goingUpPipe && !mario.onSpring;
-            if (canFall) {
+            //Determines whether Mario is falling or not
+            if (!isStanding && !mario.isJumping && mario.transition == false && !mario.clearedLevel && !mario.goingUpPipe && !mario.onSpring) {
                 mario.falling = true;
                 mario.isOnGround = false;
 
-                if (currentLocation.terrain !== "Underwater") {
+                if (currentLocation.terrain != "Underwater") {
                     mario.fall();
                 } else {
-                    mario.drawnY += 2; // simulate slower underwater fall
+                    mario.drawnY += 2;
                     mario.isOnGround = false;
                 }
             }
 
-            // Draw "air-layer" blocks efficiently
-            const visibleTypes = new Set(["Water", "Lava", "Air"]); // faster lookup
-            const minX = 0;
-            const maxX = width - shiftWidth;
-
-            for (let j = 0; j < currentLocation.area.length; j++) {
-                const row = currentLocation.area[j];
-                for (let i = 0; i < row.length; i++) {
-                    const block = row[i];
-                    if (block && visibleTypes.has(block.type)) {
-                        const rightX = block.drawnX + block.width;
-                        if (block.drawnX <= maxX && rightX >= minX) {
-                            block.draw();
-                        }
+            //The reason I have two of these statements is to make sure that the background is not drawn over the pit as seen in the block.draw function, and then to make sure that every block drawn is still above this air layer
+            currentLocation.area.forEach((row, j) => {
+                row.forEach((block, i, arr) => {
+                    if (block.drawnX <= width - shiftWidth && block.drawnX + block.width >= 0 && ["Water", "Lava", "Air"].includes(block.type)) {
+                        block.draw();
                     }
-                }
-            }
+                });
+            });
 
             //All enemy logic
-            if (currentLocation.enemies) {
+            if (currentLocation.enemies != undefined) {
                 for (let enemy of currentLocation.enemies) {
                     if (canUpdate) {
-                        enemy.update(
-                            movingScreen,
-                            currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth,
-                            mario.velX,
-                            mario.drawnX,
-                            mario.drawnY + mario.height / 2,
-                            world
-                        );
+                        enemy.update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX, mario.drawnX, mario.drawnY + mario.height / 2, world);
 
-                        for (let hammer of enemy.hammers) {
-                            hammer.update(
-                                movingScreen,
-                                currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth,
-                                mario.velX,
-                                mario.drawnX,
-                                mario.velX
-                            );
-                            hammer.collides(mario);
-                        }
-
-                        // Add spinies if not already in enemies
-                        for (let spiny of enemy.spinies) {
-                            if (!currentLocation.enemies.includes(spiny)) {
-                                currentLocation.enemies.push(spiny);
-                            }
-                        }
+                        enemy.hammers.forEach((hammer, i, hammers) => {
+                            hammers[i].update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX, mario.drawnX, mario.velX);
+                            hammers[i].collides(mario);
+                        });
                     }
 
                     if (!enemy.gone) {
+                        if (canUpdate) {
+                            if (enemy.spinies.length > 0) {
+                                enemy.spinies.forEach((spiny, i, arr) => {
+                                    if (currentLocation.enemies.indexOf(arr[i]) == -1) {
+                                        currentLocation.enemies.push(arr[i]);
+                                    }
+                                });
+                            }
+                        }
+
                         if (enemy.alive) {
-                            if (!mario.transition && !mario.goingUpPipe) {
+                            if (mario.transition == false && !mario.goingUpPipe) {
                                 enemy.topMarioCollisions(mario);
                                 enemy.otherCollisions(mario, mario);
                             } else {
                                 enemy.timeToMoveUpAndDown = 0;
                             }
 
-                            for (let other of currentLocation.enemies) {
-                                if ((enemy.collisions && other.collisions) || enemy.moving || other.moving) {
-                                    enemy.otherCollisions(other, mario);
+                            for (let enemy2 of currentLocation.enemies) {
+                                if ((enemy.collisions && enemy2.collisions) || (enemy.moving || enemy2.moving)) {
+                                    enemy.otherCollisions(enemy2, mario);
                                 }
                             }
                         }
 
-                        // RedKoopa wall checks
-                        if (enemy.type === "RedKoopa" && !enemy.inShell && enemy.drawnY === enemy.lastGroundY) {
-                            const rowIndex = Math.floor((enemy.drawnY + enemy.height) / standardHeight);
-                            const row = currentLocation.area[rowIndex] || [];
-                            for (let block of row) {
-                                if (!block.hasCollisions) {
-                                    if (enemy.directionFacing === "left" && enemy.drawnX - block.drawnX > 0 && enemy.drawnX - block.drawnX < 20) {
-                                        enemy.directionFacing = "right";
-                                    } else if (enemy.directionFacing === "right" && block.drawnX - enemy.drawnX > 0 && block.drawnX - enemy.drawnX < 20) {
-                                        enemy.directionFacing = "left";
+                        if (enemy.type == "RedKoopa" && !enemy.inShell && enemy.drawnY == enemy.lastGroundY) {
+                            let row = currentLocation.area.filter((row, i, arr) => i * standardWidth >= enemy.drawnY + enemy.height && (i + 1) * standardHeight <= enemy.drawnY + enemy.height + standardHeight);
+
+                            if (row.length > 0) {
+                                row[0].forEach((block, i, arr) => {
+                                    if (!block.hasCollisions) {
+                                        if (enemy.directionFacing == "left" && enemy.drawnX - block.drawnX < 20 && enemy.drawnX - block.drawnX > 0) {
+                                            enemy.directionFacing = "right";
+                                        } else if (enemy.directionFacing == "right" && block.drawnX - enemy.drawnX < 20 && block.drawnX - enemy.drawnX > 0) {
+                                            enemy.directionFacing = "left";
+                                        }
                                     }
-                                }
+                                });
                             }
                         }
 
-                        // Gravity / falling
-                        if (
-                            canUpdate &&
-                            !enemy.isStanding &&
-                            enemy.affectedByGravity &&
-                            !enemy.isFlying &&
-                            !enemy.isJumping &&
-                            enemy.type.indexOf("Lakitu") === -1 &&
-                            enemy.type !== "BlooperSwimming" &&
-                            enemy.type !== "Podobo"
-                        ) {
+                        if (canUpdate && !enemy.isStanding && enemy.affectedByGravity && !enemy.isFlying && !enemy.isJumping && enemy.type.indexOf("Lakitu") == -1 && enemy.type != "BlooperSwimming" && enemy.type != "Podobo") {
                             enemy.fall();
                         }
 
-                        // Draw plants
-                        if (enemy.type.includes("Plant") && enemy.drawnX + enemy.width >= 0 && enemy.drawnX <= width - shiftWidth) {
+                        if (enemy.type.indexOf("Plant") > -1 && enemy.drawnX <= width - shiftWidth && enemy.drawnX + enemy.width >= 0) {
                             enemy.draw();
                         }
 
-                        // Off-screen death
-                        if (enemy.drawnY > height && enemy.type !== "Podobo") {
+                        if (enemy.drawnY > height && enemy.type != "Podobo") {
                             enemy.die("stomp");
                         }
                     }
                 }
             }
 
-            currentLocation.area.forEach((row) => {
-                row.forEach((block) => {
-                    if (block.drawnX + block.width >= 0 && block.drawnX <= width - shiftWidth && !["Water", "Lava", "Air"].includes(block.type)) {
-
-                        // Draw the block
+            currentLocation.area.forEach((row, j) => {
+                row.forEach((block, i, arr) => {
+                    if (block.drawnX <= width - shiftWidth && block.drawnX + block.width >= 0 && !["Water", "Lava", "Air"].includes(block.type) && block.directionMoving == null) {
                         block.draw();
 
-                        // Extra handling for static blocks (ground/cloud) when level is cleared
-                        if (block.directionMoving == null && mario.clearedLevel && (block.type.includes("Ground") || block.type.includes("Cloud")) && block.drawnX > newWidth / 2) {
+                        if (mario.clearedLevel && (block.type.indexOf("Ground") > -1 || block.type.indexOf("Cloud") > -1) && block.drawnX > newWidth / 2) {
                             let ground = new Image();
                             ground.src = block.img.src;
 
                             for (let i = 0; i < 10; i++) {
-                                graphics.drawImage(ground, block.drawnX + i * block.width, block.drawnY, block.width, block.height);
+                                graphics.drawImage(ground, block.drawnX + (i * block.width), block.drawnY, block.width, block.height);
                             }
                         }
                     }
                 });
             });
 
-            //HERE
+            currentLocation.area.forEach((row, j) => {
+                row.forEach((block, i, arr) => {
+                    if (block.drawnX <= width - shiftWidth && block.drawnX + block.width >= 0 && !["Water", "Lava", "Air"].includes(block.type) && block.directionMoving != null) {
+                        block.draw();
+                    }
+                });
+            });
+
             setScores();
 
             setCoins();
             setDebris();
 
-            for (let i = fireballs.length - 1; i >= 0; i--) {
-                let fireball = fireballs[i];
-
+            fireballs.forEach((fireball, i, arr) => {
                 if (canUpdate) {
-                    fireball.update(
-                        movingScreen,
-                        currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth,
-                        mario.velX
-                    );
+                    arr[i].update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX);
                 }
 
-                // Draw if on-screen
                 if (fireball.drawnX <= width - shiftWidth && fireball.drawnX + fireball.width >= 0) {
                     fireball.draw();
                 }
 
-                // Check collisions with enemies
                 let canBreak = false;
-                if (currentLocation.enemies) {
-                    for (let enemy of currentLocation.enemies) {
-                        if (fireball.collides(enemy, mario)) {
+
+                if (currentLocation.enemies != undefined) {
+                    currentLocation.enemies.forEach((val, j, enemies) => {
+                        if (arr[i].collides(enemies[j], mario)) {
                             canBreak = true;
-                            break;
+                            return;
                         }
-                    }
+                    });
                 }
 
-                // Remove fireball if off-screen or collided
-                if (fireball.drawnY > height || canBreak) {
-                    fireballs.splice(i, 1);
+                //deletes fireworks if they go below the screen
+                if (arr[i].drawnY > height || canBreak) {
+                    arr.splice(i, 1);
+                    return;
                 }
-            }
+            });
 
             if (canUpdate) {
                 timeUntilNextFlame--;
             }
 
-            if (currentLocation.enemies && currentLocation.enemies.length > 0) {
-                // Filter only Bowser enemies once
-                const bowsers = currentLocation.enemies.filter(enemy => enemy.type === "Bowser");
+            if (currentLocation.enemies != undefined) {
+                let bowsers = [];
 
-                for (let bowser of bowsers) {
-                    if (!bowser.alive) continue;
+                currentLocation.enemies.forEach((enemy, i, arr) => {
+                    if (enemy.type == "Bowser") {
+                        bowsers.push(arr[i]);
+                    }
+                });
 
-                    // Disable collisions after Mario clears castle
-                    if (mario.transition === "cleared castle") {
+                bowsers.forEach((bowser, i, arr) => {
+                    if (mario.transition == "cleared castle") {
                         bowser.collisions = false;
                     }
 
-                    // Pre-bowser flames for early castle worlds
-                    if (world < 8 && timeUntilNextFlame <= 0 && currentLocation.terrain === "Castle") {
-                        if (bowser.drawnX > newWidth && currentLocation.area[0][84].drawnX < newWidth) {
-                            flames.push(new Projectile(
-                                "BowserFlame",
-                                width,
-                                260 + standardHeight * random(0, 2),
-                                "left",
-                                0,
-                                sounds
-                            ));
-                            sounds[13].currentTime = 0;
-                            sounds[13].play();
-                            timeUntilNextFlame = 100 * random(4, 5);
-                        }
-                    }
-
-                    // Bowser shooting flames when on screen
-                    if (bowser.timeToShootFlame <= 0 && bowser.drawnX <= 600) {
-                        flames.push(new Projectile(
-                            "BowserFlame",
-                            bowser.directionFacing === "left" ? bowser.drawnX : bowser.drawnX + bowser.width,
-                            bowser.drawnY + 30,
-                            bowser.directionFacing,
-                            0,
-                            sounds
-                        ));
+                    if (world < 8 && timeUntilNextFlame <= 0 && currentLocation.enemies != undefined && bowser.alive && bowser.drawnX > newWidth && currentLocation.area[0][84].drawnX < newWidth && currentLocation.terrain == "Castle") {
+                        flames.push(new Projectile("BowserFlame", width, 260 + standardHeight * random(0, 2), "left", 0, sounds));
                         sounds[13].currentTime = 0;
                         sounds[13].play();
-                        bowser.timeToShootFlame = 300;
+
+                        timeUntilNextFlame = 100 * random(4, 5);
                     }
 
-                    // Bowser throwing hammers in later worlds
-                    if (world >= 8 || world === "D") {
-                        if (canUpdate) bowser.timeToThrow--;
+                    if (bowser != undefined && bowser.alive) {
+                        if (bowser.timeToShootFlame <= 0 && bowser.alive && bowser.drawnX <= 600) {
+                            flames.push(new Projectile("BowserFlame", bowser.directionFacing == "left" ? bowser.drawnX : bowser.drawnX + bowser.width, bowser.drawnY + 30, bowser.directionFacing, 0, sounds));
+                            sounds[13].currentTime = 0;
+                            sounds[13].play();
 
-                        bowser.throwing = bowser.timeToThrow < 5;
+                            bowser.timeToShootFlame = 300;
+                        }
 
-                        if (bowser.timeToThrow <= 0) {
-                            bowser.hammers.push(new Projectile(
-                                "Hammer",
-                                bowser.drawnX,
-                                bowser.drawnY,
-                                bowser.directionFacing,
-                                1,
-                                bowser.sounds
-                            ));
+                        if (world >= 8 || world == "D") {
+                            if (canUpdate) {
+                                bowser.timeToThrow--;
+                            }
 
-                            if (bowser.hammersLeft <= 0) {
-                                bowser.hammersLeft = random(3, 7);
-                                bowser.timeToThrow = 40;
+                            if (bowser.timeToThrow < 5) {
+                                bowser.throwing = true;
                             } else {
-                                bowser.hammersLeft--;
-                                bowser.timeToThrow = 10;
+                                bowser.throwing = false;
+                            }
+
+                            if (bowser.timeToThrow <= 0) {
+                                bowser.hammers.push(new Projectile("Hammer", bowser.drawnX, bowser.drawnY, bowser.directionFacing, 1, bowser.sounds));
+
+                                if (bowser.hammersLeft <= 0) {
+                                    bowser.hammersLeft = random(3, 7);
+                                    bowser.timeToThrow = 40;
+                                } else {
+                                    bowser.hammersLeft--;
+                                    bowser.timeToThrow = 10;
+                                }
                             }
                         }
                     }
-                }
+                });
             }
 
-            for (let powerup of powerups) {
+            powerups.forEach((powerup, i, arr) => {
                 if (canUpdate) {
-                    powerup.update(
-                        movingScreen,
-                        currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth,
-                        mario.velX
-                    );
+                    arr[i].update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX);
                 }
 
-                const powerupRight = powerup.drawnX + powerup.width;
-                if (powerup.drawnX <= width - shiftWidth && powerupRight >= 0) {
+                if (powerup.drawnX <= width - shiftWidth && powerup.drawnX + powerup.width >= 0) {
                     powerup.draw();
                 }
 
-                if (canUpdate) {
-                    if (powerup.condition && powerup.type !== "Star" && powerup.risen && !powerup.isJumping) {
-                        powerup.fall();
-                    } else if (!powerup.risen) {
-                        powerup.rise();
-                    }
+                if (arr[i].condition && arr[i].type != "Star" && arr[i].risen && !arr[i].isJumping && canUpdate) {
+                    arr[i].fall();
+                } else if (!arr[i].risen) {
+                    arr[i].rise();
                 }
 
-                powerup.collides(mario, powerups);
-            }
+                arr[i].collides(mario, powerups);
+            });
 
-            for (let flame of flames) {
-                const flameRight = flame.drawnX + flame.width;
-                if (flameRight >= 0) {
+            flames.forEach((flame, i, arr) => {
+                if (flame.drawnX + flame.width >= 0) {
                     if (canUpdate) {
-                        flame.update(movingScreen, currentLocation.canScroll, mario.velX);
+                        arr[i].update(movingScreen, currentLocation.canScroll, mario.velX);
                     }
 
-                    flame.collides(mario);
+                    arr[i].collides(mario);
                     flame.draw();
                 }
-            }
+            });
 
-            for (let enemy of currentLocation.enemies) {
-                // Draw all hammers
-                for (let hammer of enemy.hammers) {
+            currentLocation.enemies.forEach((enemy) => {
+                enemy.hammers.forEach((hammer) => {
                     hammer.draw();
-                }
+                });
 
-                // Draw enemy if it's on screen and not a plant
-                const enemyRight = enemy.drawnX + enemy.width;
-                if (!enemy.gone && enemy.type.indexOf("Plant") === -1 && enemy.drawnX <= width - shiftWidth && enemyRight >= 0) {
+                if (!enemy.gone && enemy.type.indexOf("Plant") == -1 && enemy.drawnX <= width - shiftWidth && enemy.drawnX + enemy.width >= 0) {
                     enemy.draw();
                 }
-            }
+            })
 
-            for (let row of currentLocation.area) {
-                for (let block of row) {
-                    if (block.fireBar !== undefined) {
-                        for (let i = 0; i < block.fireBar.length; i++) {
-                            const fire = block.fireBar[i];
-
+            currentLocation.area.forEach((row, j) => {
+                row.forEach((block, i, arr) => {
+                    if (arr[i].fireBar != undefined) {
+                        arr[i].fireBar.forEach((fire, k, fireballs) => {
                             if (canUpdate) {
-                                fire.update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX);
+                                fireballs[k].update(movingScreen, currentLocation.canScroll && mario.drawnX >= width / 2 - shiftWidth, mario.velX);
                             }
 
-                            if (i > 0) {
-                                fire.collides(mario);
+                            if (k > 0) {
+                                fireballs[k].collides(mario);
                             }
 
-                            fire.draw();
-                        }
+                            fireballs[k].draw();
+                        });
                     }
-                }
-            }
+                });
+            });
 
             timeUntilNextFireball--;
 
@@ -1862,13 +1670,13 @@ export const gameEngine = (canvas) => {
 
             mario.update(reset, currentLocation.canScroll, currentLocation.terrain, world);
 
-            for (let row of currentLocation.area) {
-                for (let block of row) {
-                    if (block.type === "Flagpole") {
-                        block.flagpoleCollisions(mario);
+            currentLocation.area.forEach((row) => {
+                row.forEach((block, i, arr) => {
+                    if (arr[i].type == "Flagpole") {
+                        arr[i].flagpoleCollisions(mario);
                     }
-                }
-            }
+                })
+            })
 
             canUpdate = true;
 
@@ -1880,28 +1688,25 @@ export const gameEngine = (canvas) => {
 
             let a = [];
 
-            for (let row of currentLocation.area) {
-                let canStand = true;
+            currentLocation.area.forEach((row, j) => {
+                a = row.filter((block, i, arr) => {
+                    if (!block.hasCollisions) {
+                        return false;
+                    }
 
-                for (let block of row) {
-                    if (!block.hasCollisions) continue;
+                    return mario.drawnX + mario.width - 5 > block.drawnX + 2 && mario.drawnX + 5 < block.drawnX + block.width - 2 && mario.drawnY >= block.drawnY;
+                });
 
-                    if (
-                        mario.drawnX + mario.width - 5 > block.drawnX + 2 &&
-                        mario.drawnX + 5 < block.drawnX + block.width - 2 &&
-                        mario.drawnY >= block.drawnY
-                    ) {
-                        if (mario.isCrouching && block.type !== "Air" && mario.drawnY <= block.drawnY + block.height) {
-                            canStand = false;
-                            break; // no need to check further blocks in this row
-                        }
+                if (a.length > 0) {
+                    if (mario.isCrouching) {
+                        a.forEach((block, i, arr) => {
+                            if (block.type != "Air" && mario.drawnY <= block.drawnY + block.height) {
+                                mario.canStand = false;
+                            }
+                        });
                     }
                 }
-
-                if (!canStand) {
-                    mario.canStand = false;
-                }
-            }
+            });
 
             if (!mario.behindCastle) {
                 if (mario.transition != "down pipe" && mario.transition != "into pipe" && !mario.goingUpPipe) {
@@ -1980,7 +1785,7 @@ export const gameEngine = (canvas) => {
 
     let intervalId;
 
-    const updateTime = () => {
+    /*const updateTime = () => {
         if (gameTime <= 0 && !mario.clearedLevel && mario.transition != "cleared castle") {
             mario.die();
         }
@@ -1997,7 +1802,27 @@ export const gameEngine = (canvas) => {
             clearInterval(intervalId);
             return;
         }
-    }
+    }*/
+
+    const updateTime = () => {
+        if (quit) {
+            clearInterval(intervalId);
+            return;
+        }
+
+        if (gameTime <= 0 && !mario.clearedLevel && mario.transition !== "cleared castle") {
+            mario.die();
+            return;
+        }
+
+        if (gameTime === 100 && !music.src.includes(`${pathname}/sounds/hurryUp.wav`) && !music.src.includes(`${pathname}/sounds/savePrincess.wav`)) {
+            music.src = `${pathname}/sounds/hurryUp.wav`;
+        }
+
+        if (gameTime > 0 && state === "game" && mario.transition === false && !mario.clearedLevel) {
+            gameTime--;
+        }
+    };
 
     update();
     intervalId = setInterval(updateTime, 400);

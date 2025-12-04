@@ -85,8 +85,14 @@ const AuthRegister = () => {
         isRegister={true}
       />
       {/* BACK BUTTON ADDED FOR IMPROVED USER NAVIGATION EXPERIENCE */}
-      {ui.ableToLogin ? <p><Link to="/login">Already have an account? Login here.</Link></p> : null}
-      <p> <Link onClick={() => setIsAbleToAuthenticate(false)} to="/websites">Back to list</Link></p>
+      {ui.ableToLogin ? <p><Link onClick={() => {
+        setIsAbleToAuthenticate(false);
+      }} to="/login">Already have an account? Login here.</Link></p> : null}
+      <p> <Link onClick={(e) => {
+        setIsAbleToAuthenticate(false);
+        window.location.href = "/websites";
+      }
+      } to="/websites">Back to list</Link></p>
     </div>
   );
 };

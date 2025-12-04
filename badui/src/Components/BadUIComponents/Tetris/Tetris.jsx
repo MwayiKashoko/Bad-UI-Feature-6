@@ -1067,7 +1067,7 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
 
     update();
 
-    document.addEventListener("keydown", e => {
+    /*document.addEventListener("keydown", e => {
         e.preventDefault();
         if (games.includes(state)) {
             let moved = 0;
@@ -1147,5 +1147,99 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                 downPressed = false;
             }
         }
+    });*/
+
+    document.addEventListener("keydown", (e) => {
+        const tag = e.target.tagName;
+
+        // allow typing in inputs, textareas, and contentEditable
+        if (tag === "INPUT" || tag === "TEXTAREA" || e.target.isContentEditable) {
+            return;
+        }
+
+        // block scrolling for arrow keys and space
+        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
+            e.preventDefault();
+        }
+
+        if (!games.includes(state)) return;
+
+        let moved = 0;
+
+        if (e.key === "ArrowDown") {
+            moved = blockSize;
+            downPressed = true;
+        } else if (e.key === "ArrowLeft" && isValid("left")) {
+            currentCol--;
+        } else if (e.key === "ArrowRight" && isValid("right")) {
+            currentCol++;
+        } else if (e.key === "ArrowUp") {
+            rotatePiece("clockwise");
+        } else if (e.key === "x") {
+            rotatePiece("counter-clockwise");
+        } else if (e.key === "Shift") {
+            if (canHold) {
+                canHold = false;
+
+                let piece = 0;
+
+                for (let i = 0; i < currentPiece.length; i++) {
+                    for (let j = 0; j < currentPiece[i].length; j++) {
+                        if (currentPiece[i][j] != 0) {
+                            try {
+                                piece = currentPiece[i][j];
+                            } catch (e) {
+
+                            }
+                        }
+                    }
+                }
+
+                if (pieceHolding.length != 0) {
+                    currentPiece = pieceHolding;
+
+                    currentRow = 0;
+                    yPos = 0;
+
+                    currentCol = Math.round((cols - currentPiece.length) / 2);
+                } else {
+                    nextPiece();
+                }
+
+                pieceHolding = [];
+
+                for (let i = 0; i < pieces[piece - 1].length; i++) {
+                    pieceHolding.push([]);
+                    for (let j = 0; j < pieces[piece - 1][i].length; j++) {
+                        pieceHolding[i].push(pieces[piece - 1][i][j]);
+                    }
+                }
+            }
+        } else if (e.key === "z") {
+            findGhost(true);
+        }
+
+        if (["z", "x", "Shift", "ArrowLeft", "ArrowUp", "ArrowDown"].includes(e.key)) {
+            draw(moved);
+        }
     });
+
+    document.addEventListener("keyup", (e) => {
+        const tag = e.target.tagName;
+
+        if (tag === "INPUT" || tag === "TEXTAREA" || e.target.isContentEditable) {
+            return;
+        }
+
+        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
+            e.preventDefault();
+        }
+
+        if (!games.includes(state)) return;
+
+        if (e.key === "ArrowDown") {
+            downPressed = false;
+        }
+    });
+
 }

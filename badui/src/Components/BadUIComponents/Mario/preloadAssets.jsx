@@ -603,7 +603,7 @@ export const audioPaths = [
 ];
 
 
-export function PreloadAssets() {
+/*export function PreloadAssets() {
   useEffect(() => {
     const images = imagePaths.map(path => {
       const img = new Image();
@@ -620,4 +620,24 @@ export function PreloadAssets() {
 
     // You can keep images and audios in state if needed
   }, []);
+}*/
+
+let assetsLoaded = false;
+export const IMAGES = {};
+export const AUDIOS = {};
+
+export function preloadAssets() {
+  if (assetsLoaded) return;
+  assetsLoaded = true;
+
+  imagePaths.forEach(path => {
+    const img = new Image();
+    img.src = path;
+    IMAGES[path] = img;
+  });
+
+  audioPaths.forEach(path => {
+    const audio = new Audio(path);
+    AUDIOS[path] = audio;
+  });
 }

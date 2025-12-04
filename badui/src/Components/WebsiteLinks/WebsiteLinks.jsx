@@ -114,7 +114,10 @@ const WebsiteLinks = () => {
                 {websites.map((elem) => (
                     <div key={elem.name}>
                         <li >
-                            <Link onClick={setIsAbleToAuthenticate(false)} to={"/register"} state={{
+                            <Link onClick={() => {
+                                setIsAbleToAuthenticate(false);
+                            }
+                            } to={"/register"} state={{
                                 ableToLogin: elem.canLogin,
                                 uiFeature: elem.name,
                                 alternativeEmail: elem.alternativeEmail,

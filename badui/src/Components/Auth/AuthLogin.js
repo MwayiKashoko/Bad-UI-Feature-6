@@ -53,8 +53,13 @@ const AuthLogin = () => {
         ui={ui}
       />
       {/* BACK BUTTON ADDED FOR IMPROVED USER NAVIGATION EXPERIENCE */}
-      <p> <Link onClick={setIsAbleToAuthenticate(false)} to="/register">Don't have an account? Create one here.</Link></p>
-      <p> <Link onClick={setIsAbleToAuthenticate(false)} to="/websites">Back to list</Link></p>
+      <p> <Link onClick={() => {
+        setIsAbleToAuthenticate(false);
+      }} to="/register">Don't have an account? Create one here.</Link></p>
+      <p> <Link onClick={() => {
+        setIsAbleToAuthenticate(false);
+        window.location.href = "/websites";
+      }} to="/websites">Back to list</Link></p>
     </div>
   );
 };

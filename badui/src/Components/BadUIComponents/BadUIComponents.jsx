@@ -5,7 +5,8 @@ import { random, expandBinomial, isAbleToAuthenticate, setIsAbleToAuthenticate }
 import { tetrisCode } from "./Tetris/Tetris";
 import * as math from "mathjs";
 import { marioCode } from "./Mario/Mario";
-import { PreloadAssets } from "./Mario/preloadAssets";
+import { preloadAssets } from "./Mario/preloadAssets";
+import React from "react";
 
 export const BirthdayNeverAvailable = () => {
     return <span> ERROR: Birthday already in use. Please choose another</span>
@@ -393,7 +394,7 @@ export const AlertEveryOperation = () => {
     }, []);
 }
 
-export const MarioGame = ({ user, ui }) => {
+/*export const MarioGame = ({ user, ui }) => {
     const canvasRef = useRef();
     const [authFlag, setAuthFlag] = useState(isAbleToAuthenticate);
 
@@ -417,6 +418,7 @@ export const MarioGame = ({ user, ui }) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
+        console.log(4);
         marioCode(canvas); // now canvas is defined
     }, []);
 
@@ -429,7 +431,7 @@ export const MarioGame = ({ user, ui }) => {
     }, [authFlag]);
 
     useEffect(() => {
-        setText("Could not verify that you're a human. level 1-1 to verify you are not a robot.");
+        setText("Could not verify that you're a human. Finish level 1-1 to verify you are not a robot.");
     }, []);
 
     PreloadAssets();
@@ -441,4 +443,69 @@ export const MarioGame = ({ user, ui }) => {
             <button onClick={() => alert('Left/Right arrow to move left/right. down to duck, z to run, x to shoot fireballs. Up to jump')}>Help</button> <br /> <br />
         </>}
     </>);
-}
+}*/
+
+export const MarioGame = React.memo(function MarioGame({ user, ui }) {
+    const canvasRef = useRef();
+
+    // STATE SHOULD NOT FORCE FREQUENT RERENDERS
+    const [authFlag, setAuthFlag] = useState(isAbleToAuthenticate);
+    const [text, setText] = useState("");
+    const [showCanvas, setShowCanvas] = useState(true);
+
+    // 1. PRELOAD ASSETS ONCE
+    useEffect(() => {
+        preloadAssets();
+    }, []);
+
+    // 2. RUN GAME LOOP ONCE
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        // start the game
+        marioCode(canvas);
+    }, []);
+
+    // 3. AUTH CHECK – but DO NOT set state 10 times per second
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const newFlag = isAbleToAuthenticate;
+            setAuthFlag(prev => (prev !== newFlag ? newFlag : prev));
+        }, 500);
+
+        return () => clearInterval(interval);
+    }, []);   // ✔ FIXED
+
+
+    // 4. REACTION TO authFlag CHANGE
+    useEffect(() => {
+        if (authFlag) {
+            setText("Verification successful! You can sign in now!");
+            setShowCanvas(false);
+        }
+    }, [authFlag]);
+
+    // 5. INITIAL TEXT
+    useEffect(() => {
+        setText("Could not verify that you're a human. Finish level 1-1.");
+    }, []);
+
+    return (
+        <>
+            <h2>{text}</h2>
+
+            {showCanvas && (
+                <>
+                    <canvas
+                        ref={canvasRef}
+                        width={800}
+                        height={600}
+                        style={{ backgroundColor: "black" }}
+                    />
+                    <button onClick={() => alert('Controls: ...')}>Help</button>
+                </>
+            )}
+        </>
+    );
+});
