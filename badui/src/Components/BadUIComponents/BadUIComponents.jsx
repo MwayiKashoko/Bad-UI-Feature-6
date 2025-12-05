@@ -669,10 +669,32 @@ const MusicStaff = ({ notes }) => {
     );
 };
 
-export const PianoPieces = () => {
-    //s to l from C3 to C4 originally
-    //Holding shift brings notes up octave
+const SOUND_FILES = ["Bb2", "B2", "C3", "Db3",
+    "D3", "Eb3", "E3", "F3",
+    "Gb3", "G3", "Ab3", "A3",
+    "Bb3", "B3", "C4", "Db4",
+    "D4", "Eb4", "E4"];
 
+const preloadSounds = () => {
+    const sounds = {};
+
+    const load = (src) =>
+        new Promise((resolve) => {
+            const audio = new Audio();
+            audio.src = `/testNotes/${src}.mp3`;
+            audio.addEventListener("canplaythrough", () => resolve(audio), { once: true });
+        });
+
+    for (const file of SOUND_FILES) {
+        sounds[file] = load(file);
+    }
+
+    return sounds;
+};
+
+
+export const PianoPieces = () => {
+    //q to ' from Bb2 to E4 originally
     const [activeKey, setActiveKey] = useState(null);
 
     const whiteKeys = [
@@ -704,6 +726,7 @@ export const PianoPieces = () => {
     };
 
     const blackKeys = [
+        { note: 'Bb', id: -2, position: 0, key: "q", shift: -1 },
         { note: 'Db', id: 1, position: 2, key: "e", shift: 0 },
         { note: 'Eb', id: 3, position: 3, key: "r", shift: 0 },
         { note: 'Gb', id: 6, position: 5, key: "y", shift: 0 },
@@ -714,13 +737,14 @@ export const PianoPieces = () => {
     ];
 
     const blackKeyLetters = {
-        "e": 0,
-        "r": 1,
-        "y": 2,
-        "u": 3,
-        "i": 4,
-        "p": 5,
-        "[": 6
+        "q": 0,
+        "e": 1,
+        "r": 2,
+        "y": 3,
+        "u": 4,
+        "i": 5,
+        "p": 6,
+        "[": 7
     };
 
     const handleKeyPress = (note, id) => {
@@ -835,6 +859,8 @@ export const PianoPieces = () => {
 
             if (!sound) return;
 
+            //sound.volume = 0.25;
+
             // release reference after finished and remove from held
             sound.addEventListener("ended", () => {
                 sound = null;
@@ -855,18 +881,664 @@ export const PianoPieces = () => {
             window.removeEventListener("keydown", handle);
             window.removeEventListener("keyup", handleUp);
         };
-    }, []);
+    }, [blackKeyLetters, blackKeys, whiteKeyLetters, whiteKeys]);
 
-    //Bach Fugue in E Minor BWV 855
-    const BachFugue = ["E3", "G3", "B3", "E4",
-        "D#4", "E4", "Dn4", "E4",
-        "C#4", "E4", "Cn4", "E4",
-        "B3", "E4", "D#4", "E4",
-        "A#3", "C#4", "G3", "F#3",
-        "G3", "A3", "F#3", "E3"];
+    const pieces = [
+        //Bach Fugue in E Minor BWV 855
+        {
+            name: "Bach Fugue in E Minor BWV 855",
+            notes: ["E3", "G3", "B3", "E4",
+                "D#4", "E4", "Dn4", "E4",
+                "C#4", "E4", "Cn4", "E4",
+                "B3", "E4", "D#4", "E4",
+                "A#3", "C#4", "G3", "F#3",
+                "G3", "A3", "F#3", "E3"],
+            tempo: 100,
+        },
+
+        //Elgar Cello Concerto 2nd mvmt
+        {
+            name: "Elgar Cello Concerto 2nd mvmt",
+            notes: ["B2", "D3", "D3", "D3",
+                "D3", "G3", "G3", "G3",
+                "G3", "Bb3", "Bb3", "Bb3",
+                "Bb3", "F3", "F3", "F3",
+                "F#3", "G3", "G3", "G3",
+                "G3", "Bb3", "Bb3", "Bb3",
+                "Bb3", "Eb4", "Eb4", "Eb4"],
+            tempo: 100
+        },
+
+        //Liszt Wilde Jagd
+        {
+            name: "Liszt Wilde Jagd",
+            notes: ["Bb3", "C3", "D3",
+                "A3", "C3", "D3",
+                "C4", "Bb2", "D3",
+                "Bb3", "Bb2", "D3",
+                "D4", "D3", "F3",
+                "C4", "D3", "Bb3",
+            ],
+            tempo: 100
+        },
+
+        //Ravel Le Tombeau de Couperin Prelude
+        {
+            name: "Ravel Le Tombeau de Couperin Prelude",
+            notes: ["C#4", "F#3", "C#4", "B3", "Fn3", "B3",
+                "E3", "D3", "E3", "C3", "D3", "E3",
+                "A3", "D#3", "A3", "G3", "Dn3", "G3",
+                "C3", "B2", "C3", "C3", "B2", "C3",
+                "D3", "F3", "E3", "D3", "E3", "C3",
+                "B2", "C3", "C3", "B2", "C3", "D3",
+                "C3", "D3", "E3", "G3", "A3", "C4",
+                "E4", "D4", "E4", "C4", "D4", "E4",
+            ],
+            tempo: 100
+        },
+
+        //Prokofiev Piano Sonata 8 3rd mvmt
+        {
+            name: "Prokofiev Piano Sonata 8 3rd mvmt",
+            notes: ["Bb2", "D3", "F3", "Bn2", "Eb3", "F3",
+                "C3", "En3", "F3", "Bn2", "Eb3", "F3",
+                "Bb2", "D3", "F3", "Bb3", "D3",
+            ],
+            tempo: 100
+        },
+
+        //Chopin Piano Sonata 2 4th mvmt
+        {
+            name: "Chopin Piano Sonata 2 4th mvmt",
+            notes: ["Ab3", "B3", "E4",
+                "Eb4", "Bb3", "Bn3",
+                "D4", "Bb3", "C4",
+                "G3", "Ab3", "E3",
+                "D3", "Eb3", "Ab3",
+                "En3", "F3", "Bn3",
+                "F3", "G3", "B3",
+                "An3", "Bb3", "Eb4",
+                "Db4", "F3", "Bb3",
+                "C#3", "E3", "An3",
+                "C4", "Eb3", "Ab3",
+                "Bn2", "Dn3", "G3",
+                "Bn3", "D3", "Gb3",
+                "Bb2", "Db3", "Gb3",
+                "Bb3", "Gb3", "Bn3",
+                "C4", "Db4", "Eb4",
+                "En4", "Gn3", "C4",
+                "Eb3", "Gb3", "Bn3",
+                "Dn4", "F3", "Bb3",
+                "C#2", "En3", "An3",
+                "C4", "En3", "Ab3",
+                "Bn2", "Dn3", "Gn3",
+                "Bn3", "F#3", "C#4",
+                "Dn4", "Eb4", "En4"
+            ],
+            tempo: 100
+        },
+
+        //Saint-Saens Rondo and Capriccioso
+        {
+            name: "Saint-Saens Rondo and Capriccioso",
+            notes: ["E3", "G#3", "B3", "E4", "B3", "G#3",
+                "E3", "G#3", "B3", "E4", "B3", "G#3",
+                "D3", "G#3", "B3", "E4", "B3", "G#3",
+                "D3", "G#3", "B3", "E4", "B3", "G#3",
+                "C3", "Gn3", "C4", "E4", "C4", "G3",
+                "C3", "Gn3", "C4", "E4", "C4", "G3",
+                "B2", "G#3", "D4", "E4", "D4", "G#3",
+                "B2", "G#3", "D4", "E4", "D4", "G#3"
+            ],
+            tempo: 100
+        },
+
+        //Philip Glass Violin Concerto 1 3rd mvmt
+        {
+            name: "Philip Glass Violin Concerto 1 3rd mvmt",
+            notes: ["D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "G3", "A3", "G3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+                "D3", "F3", "A3", "D4", "A3", "F3",
+            ],
+            tempo: 80
+        },
+
+        //Philip Glass Violin Concerto 1 1st mvmt
+        {
+            name: "Philip Glass Violin Concerto 1 1st mvmt",
+            notes: ["D3", "F3", "A3",
+                "D3", "F3", "A3",
+                "D3", "F3", "A3",
+                "D3", "F3", "A3",
+                "C#3", "F3", "A3",
+                "C#3", "F3", "A3",
+                "C#3", "F3", "A3",
+                "C#3", "F3", "A3",
+                "D3", "F3", "Bb3",
+                "D3", "F3", "Bb3",
+                "D3", "F3", "Bb3",
+                "D3", "F3", "Bb3"
+            ],
+            tempo: 100
+        },
+
+        //Summer Vivaldi Presto
+        {
+            "name": "Summer Vivaldi Presto",
+            notes: ["D4", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "C4", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "Bb3", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "A3", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "D3"
+            ],
+            tempo: 100
+        },
+
+        //Chopin Prelude Op. 28 No 16
+        {
+            name: "Chopin Prelude Op. 28 No 16",
+            notes: ["B2", "C3", "D3", "Eb3",
+                "En3", "F3", "G3", "Ab3",
+                "F#3", "G3", "E3", "F#3",
+                "D3", "Eb3", "D3", "C3",
+                "B2", "C3", "D3", "Eb3",
+                "En3", "F3", "G3", "Ab3",
+                "F#3", "G3", "E3", "F#3",
+                "D3", "Eb3", "D3", "C3",
+                "Db3", "Eb3", "F3", "G3",
+                "Ab3", "Bb3", "Bn3", "C4",
+                "C#4", "D4",
+            ],
+            tempo: 100
+        },
+
+        //Scriabin Sonata 5
+        {
+            name: "Scriabin Sonata 5",
+            notes: ["G3", "F#3", "G3",
+                "G3", "F#3", "G3",
+                "G3", "F#3", "G3",
+                "Ab3", "G3", "Ab3",
+                "G3", "F#3", "G3",
+                "G3", "F#3", "G3",
+                "G3", "F#3", "G3",
+                "Ab3", "G3", "Ab3",
+
+                "Bb3", "An3", "Bb3",
+                "Bb3", "A3", "Bb3",
+                "Bb3", "A3", "Bb3",
+                "Bn3", "A#3", "B3",
+                "Bb3", "An3", "Bb3",
+                "Bb3", "A3", "Bb3",
+                "Bb3", "A3", "Bb3",
+                "Bn3", "A#3", "B3",
+
+                "G3", "F#3", "G3",
+                "Ab3", "C4"
+            ],
+            tempo: 100
+        },
+
+        //Balakirev Islamey
+        {
+            name: "Balakirev Islamey",
+            notes: ["Bb3", "Bb3", "Bb3",
+                "Bb3", "A3", "Bb3",
+                "Gb3", "Gb3", "A3",
+                "Bb3", "Db4", "C4",
+
+                "Ab3", "Ab3", "Ab3",
+                "Ab3", "F3", "Gb3",
+                "Ab3", "Bb3", "Ab3",
+                "F3", "F3", "F3",
+
+                "Gb3", "Gb3", "An3",
+                "Bb3", "Bb3", "C4",
+                "Eb4", "Eb4", "Db4",
+                "C4", "C4", "Bb3",
+
+                "Ab3", "Ab3", "Ab3",
+                "Db4", "Db4", "C4",
+                "Bb3", "Ab3", "Bb3",
+                "F3", "F3", "F3",
+            ],
+            tempo: 100
+        },
+
+        //Liszt Hungarian Rhapsody 6
+        {
+            name: "Liszt Hungarian Rhapsody 6",
+            notes: ["F3", "G3", "A3", "Bb3",
+                "C4", "Bb3", "A3", "Bb3",
+                "C4", "C4", "C4", "C4",
+                "C4", "C4", "C4", "C4",
+                "C4", "D4", "D4", "Eb4",
+                "Eb4", "D4", "D4", "C4",
+                "D4", "D4", "D4", "D4",
+                "D4", "D4", "D4", "D4",
+                "Eb4", "D4", "C4", "Bb3",
+                "A3", "G3", "A3", "Bb3",
+                "C4", "C4", "C4", "C4",
+                "C4", "C4", "C4", "C4",
+                "C4", "F3", "F3", "F3",
+                "F3", "C4", "C4", "D4",
+                "Bb3", "Bb3", "Bb3", "Bb3",
+                "Bb3", "Bb3", "Bb3", "Bb3",
+            ],
+            tempo: 100
+        },
+
+        //Liszt Totentaz
+        {
+            name: "Liszt Totentaz",
+            notes: ["F3", "F3", "F3", "F3",
+                "E3", "E3", "E3", "E3",
+                "F3", "F3", "F3", "F3",
+                "D3", "D3", "D3", "D3",
+                "E3", "E3", "E3", "E3",
+                "C3", "C3", "C3", "C3",
+                "D3", "D3", "D3", "D3",
+                "D3", "D3", "D3", "D3",
+                "F3", "F3", "F3", "F3",
+                "F3", "F3", "G3", "G3",
+                "F3", "F3", "E3", "E3",
+                "D3", "D3", "C3", "C3",
+                "E3", "E3", "E3", "E3",
+                "F3", "F3", "F3", "F3",
+                "E3", "E3", "E3", "E3",
+                "E3", "E3", "E3", "E3",
+            ],
+            tempo: 100
+        },
+
+        //Alkan Hands Reunited
+        {
+            name: "Alkan Hands Reunited",
+            notes: ["C3", "D3",
+                "Eb3", "D3", "C3", "Eb3",
+                "D3", "C3", "B2", "D3",
+                "C3", "B2", "C3", "D3",
+                "Eb3", "En3", "F3", "F#3",
+                "G3", "Ab3", "F#3", "Ab3",
+                "G3", "C4", "Bb3", "Ab3",
+                "G3", "Ab3", "F#3", "Ab3",
+                "G3", "Eb4", "D4", "C4",
+                "Bn3", "D4", "Fn3", "Ab3",
+                "G3", "Bn3", "D3", "F3",
+                "Eb3", "G3", "Bn3", "D3",
+                "C3", "Eb3"
+            ],
+            tempo: 100
+        },
+
+        //Bach Dorain Toccata in D Minor
+        {
+            name: "Bach Dorain Toccata in D Minor",
+            notes: ["G3", "F#3", "G3", "E3",
+                "C#4", "G3", "E4", "G3",
+                "F#3", "E3", "F#3", "D3",
+                "A3", "F#3", "D4", "F#3",
+                "E3", "D3", "E3", "D4",
+                "E3", "D3", "E3", "D4",
+                "E3", "D3", "E3", "D4",
+                "E3", "D3", "E3", "D4",
+                "E3", "D3", "E3", "C#4",
+                "E3", "D3", "E3", "C#4",
+                "E3", "D3", "E3", "C#4",
+                "E3", "D3", "E3", "C#4",
+                "D4", "D4", "D4", "D4"
+            ],
+            tempo: 200
+        },
+
+        //Rachmaninoff Moment Musicaux 6 in C Major
+        {
+            name: "Rachmaninoff Moment Musicaux 6 in C Major",
+            notes: ["E4", "C4", "E4", "C3",
+                "G3", "C4", "E4", "C4",
+                "B3", "C4", "E4", "C4",
+                "A3", "C4", "E4", "C4",
+                "Ab3", "C4", "E4", "C4",
+                "G3", "C4", "E4", "C4",
+
+                "F#3", "C4", "E4", "C4",
+                "G3", "C4", "E4", "C4",
+                "B3", "C4", "E4", "C4",
+                "An3", "C4", "E4", "C4",
+                "Ab3", "C4", "E4", "C4",
+                "G3", "C4", "E4", "G3",
+
+                "A3", "C4", "E4", "C3",
+                "G3", "C4", "E4", "C4",
+                "B3", "C4", "E4", "C4",
+                "A3", "C4", "E4", "C4",
+                "C4", "C4", "E4", "C4",
+                "G3", "C4", "E4", "C4",
+
+                "F#3", "C4", "E4", "C4",
+                "G3", "C4", "E4", "C4",
+                "E4", "C4", "E4", "C4",
+                "An3", "C4", "E4", "C4",
+                "Ab3", "C4", "E4", "C4",
+                "A3", "C4", "E4", "G3",
+                "G3", "G3", "G3", "G3"
+            ],
+            tempo: 100
+        },
+
+        //Bach Prelude 2 in C Minor (WTC Book 1)
+        {
+            name: "Bach Prelude 2 in C Minor (WTC Book 1)",
+            notes: ["C4", "Eb3", "D3", "Eb3",
+                "C3", "Eb3", "D3", "Eb3",
+                "C4", "Eb3", "D3", "Eb3",
+                "C3", "Eb3", "D3", "Eb3",
+
+                "Ab3", "F3", "En3", "F3",
+                "C3", "F3", "E3", "F3",
+                "Ab3", "F3", "En3", "F3",
+                "C3", "F3", "E3", "F3",
+            ],
+            tempo: 100
+        },
+
+        //Bach Prelude 6 in D Minor (WTC Book 1)
+        {
+            name: "Bach Prelude 6 in D Minor (WTC Book 1)",
+            notes: ["A3",
+                "F3", "D3", "A3",
+                "F3", "D3", "D4",
+                "Bb3", "G3", "Bb3",
+                "G3", "E3", "G3",
+                "E3", "C#3", "G3",
+                "E3", "C#3", "A3",
+                "F3", "D3", "A3",
+                "F3", "D3", "A3"],
+            tempo: 100
+        },
+
+        //Bach BWV 914 Fugue
+        {
+            name: "Bach BWV 914 Fugue",
+            notes: ["B3", "A3", "B3",
+                "G3", "A3", "F#3", "G3",
+                "E3", "E4", "B3", "E4",
+                "G3", "B3", "E3", "C4",
+                "D#3", "C4", "D#3", "C4",
+                "D#3", "C4", "D#3", "C4",
+                "D3", "F#3", "B3", "F#3",
+                "D3", "F#3", "B3", "F#3",
+                "C#3", "B3", "C#3", "B3",
+                "C#3", "B3", "C#3", "B3",
+                "Cn3", "E3", "A3", "E3",
+                "Cn3", "E3", "A3", "E3",
+                "B2", "A3", "G3", "A3",
+                "F#3", "B3", "A3", "B3",
+                "G3", "A3", "F#3", "G3",
+                "E3", "G3", "F#3", "E3"
+            ],
+            tempo: 100
+        },
+
+        //Mendelssohn Piano Concerto 1
+        {
+            name: "Mendelssohn Piano Concerto 1",
+            notes: ["B3", "D4", "G3", "D3",
+                "A#3", "C#4", "G3", "E3",
+                "B3", "D4", "G3", "D3",
+                "G3", "B3", "D3", "B2",
+
+                "B3", "D4", "G3", "D3",
+                "A#3", "C#4", "G3", "E3",
+                "B3", "D4", "G3", "D3",
+                "G3", "B3", "D3", "B2",
+
+                "Cn3", "E4", "A3", "E3",
+                "B3", "D#4", "A3", "E3",
+                "Cn3", "E4", "A3", "E3",
+                "A3", "C4", "E3", "C3",
+
+                "Cn3", "E4", "A3", "E3",
+                "B3", "D#4", "A3", "E3",
+                "Cn3", "E4", "A3", "E3",
+                "Eb4"
+            ],
+            tempo: 75
+        },
+
+        //Bach Prelude and Fugue in D Minor (BWV 539)
+        {
+            name: "Bach Prelude and Fugue in D Minor (BWV 539)",
+            notes: ["G3", "Bb3", "A3", "G3",
+                "F3", "D4", "E3", "D3",
+                "A3", "E3", "G#3", "Bn3",
+                "C4", "E4", "A3", "Gn3",
+                "F#3", "A3", "C4", "Eb4",
+                "D4", "C4", "Bb3", "A3",
+                "Bb3", "D3", "G3", "A3",
+                "Bb3", "D4", "G3", "F3",
+                "E3", "G3", "Bb3", "D4",
+                "C4", "Bb3", "A3", "G3",
+                "A3", "E3", "F3", "C#3",
+                "D3", "F3", "A3", "Cn3",
+                "Bb2", "D3", "F3", "A3",
+                "G3", "E3", "F3", "D3",
+                "C#3", "E3", "G3", "Bb3",
+                "A3", "G3", "F3", "E3",
+                "F3", "D3", "A3", "E3",
+                "F3", "A3", "D4", "G3"
+            ],
+            tempo: 150
+        },
+
+        //Khachaturian Piano Sonatina
+        {
+            name: "Khachaturian Piano Sonatina",
+            notes: ["C3", "E3", "G3", "E3",
+                "B2", "E3", "G3", "E3",
+                "C3", "E3", "G3", "E3",
+                "A3", "E3", "G3", "E3",
+
+                "C3", "E3", "G3", "E3",
+                "B2", "E3", "G3", "E3",
+                "C3", "E3", "G3", "E3",
+                "A3", "E3", "G3", "E3",
+
+                "C3", "Eb3", "Gb3", "Eb3",
+                "B2", "Eb3", "Gb3", "Eb3",
+                "C3", "Eb3", "Gb3", "Eb3",
+                "A3", "Eb3", "Gb3", "Eb3",
+
+                "D3", "Eb3", "Gb3", "Eb3",
+                "C3", "Eb3", "Gb3", "Eb3",
+                "B2", "Eb3", "Gb3", "Eb3",
+                "A3", "Eb3", "Gb3", "Eb3",
+            ],
+            tempo: 100
+        },
+
+        //Bach Prelude in C# Major (WTC Book 2)
+        {
+            name: "",
+            notes: ["G#3", "F3", "G#3", "C#4",
+                "G#3", "F#3", "G#3", "F3",
+                "G#3", "F3", "G#3", "C#4",
+                "G#3", "F#3", "G#3", "F3",
+
+                "A#3", "F#3", "A#3", "C#4",
+                "A#3", "G#3", "A#3", "F#3",
+                "A#3", "F#3", "A#3", "C#4",
+                "A#3", "G#3", "A#3", "F#3",
+
+                "C#3", "Fn3", "G#3", "D#4",
+                "G#3", "F#3", "G#3", "F#3",
+                "C#3", "Fn3", "G#3", "D#4",
+                "G#3", "F#3", "G#3", "F#3",
+
+                "A#3", "D#3", "Gn3", "A#3",
+                "G3", "Fn3", "G3", "D#3",
+                "A#3", "D#3", "Gn3", "A#3",
+                "G3", "Fn3", "G3", "D#3",
+            ],
+            tempo: 200
+        },
+
+        //Rachmaninoff Prelude in C# Minor
+        {
+            name: "Rachmaninoff Prelude in C# Minor",
+            notes: ["E4", "G#3", "C#4",
+                "D#4", "Gn3", "C#4",
+                "Dn4", "F#3", "Cn4",
+                "C#4", "E3", "G#3",
+                "E4", "G#3", "C#4",
+                "D#4", "Gn3", "C#4",
+                "Dn4", "F#3", "Cn4",
+                "C#4", "E3", "G#3",
+            ],
+            tempo: 100
+        },
+
+        //Tchaikovsky Piano Concerto 1
+        {
+            name: "Tchaikovsky Piano Concerto 1",
+            notes: ["Bb3", "Bb2", "C3", "Bb2",
+                "C4", "Bb2", "C3", "Bb2",
+                "D4", "Bb2", "C3", "Bb2",
+                "Bb3", "Bb2", "C3", "Bb2",
+                "C4", "Bb2", "C3", "Bb2",
+                "D4", "Bb2", "C3", "Bb2",
+                "Eb4", "Bb2", "C3", "Bb2",
+                "Bb3", "Bb2", "C3", "Bb2",
+                "C4", "Bb2", "C3", "Bb2",
+                "F3", "Bb2", "C3", "Bb2",
+                "C4", "Bb2", "C3", "Bb2",
+                "F3", "Bb2", "C3", "Bb2",
+                "C4", "Bb2", "C3", "Bb2",
+                "Bb3", "Bb2", "C3", "Bb2",
+                "C4", "Bb2", "C3", "Bb2",
+                "G3", "Bb2", "C3", "Bb2",
+            ],
+            tempo: 100
+        },
+
+        //Mendelssohn Violin Concerto
+        {
+            name: "Mendelssohn Violin Concerto",
+            notes: ["E4", "E4", "B3", "B3",
+                "C#4", "C#4", "B3", "B3",
+                "C#4", "C#4", "B3", "B3",
+                "C#4", "C#4", "B3", "B3",
+                "A3", "A3", "B3", "B3",
+                "C#4", "C#4", "B3", "B3",
+                "C#4", "C#4", "B3", "B3",
+                "C#4", "C#4", "B3", "B3",
+                "B3", "B3", "A3", "A3",
+                "B3", "B3", "Cn4", "C4",
+                "C#4", "C#4", "D#4", "D#4",
+                "E4", "E4", "F#3", "F#3",
+                "G#3", "G#3", "E4", "E4",
+                "B3", "B3", "G#3", "G#3",
+                "B3", "B3", "A3", "A3",
+                "F#3", "F#3", "B3", "B3"
+            ],
+            tempo: 80
+        },
+
+        //Prokofiev Violin Sonata 1
+        {
+            name: "Prokofiev Violin Sonata 1",
+            notes: ["E3", "G3", "C4", "G3", "C4", "G3",
+                "E3", "G3", "C4", "G3", "C4", "G3",
+                "E3", "G#3", "C4", "G#3", "C4", "G#3",
+                "E3", "G#3", "C4", "G#3", "C4", "G#3",
+                "E3", "A3", "C4", "A3", "C4", "A3",
+                "E3", "A3", "C4", "A3", "C4", "A3",
+                "A3", "C4", "F3", "E4", "F3", "E4",
+                "D4", "E4", "D4", "C4", "Bb3", "A3"
+            ],
+            tempo: 130
+        },
+
+        //Hungarian Rhapsody 18
+        {
+            name: "Hungarian Rhapsody 18",
+            notes: ["D3", "E3", "D3", "C#3",
+                "D3", "A3", "G3", "E3",
+                "D3", "E3", "D3", "C#3",
+                "D3", "A3", "G3", "E3",
+                "D3", "E3", "D3", "C#3",
+                "D3", "A3", "G3", "E3",
+                "D3", "A3", "G3", "E3",
+                "D3", "A3", "G3", "E3",
+                "D3"
+            ],
+            tempo: 100
+        },
+
+        //Meraux Etude Op. 63 No. 8
+        {
+            name: "Meraux Etude Op. 63 No. 8",
+            notes: ["C4", "C3", "E3", "G3",
+                "B3", "E4", "C3", "E3",
+                "A3", "C4", "E4", "C3",
+                "G3", "C4", "E4", "G3",
+                "G#3", "G#3", "F3", "D3",
+                "A3", "F3", "F3", "D3",
+                "Bb3", "F3", "D3", "F3",
+                "Bn3", "G3", "F3", "D3"
+            ],
+            tempo: 100
+        },
+    ];
+
+    preloadSounds();
+    let audioCtx;
+    function unlockAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+    }
+
+    const playSong = async () => {
+        unlockAudio(); // must be inside same click
+
+        //0-30
+        let piece = 30;
+
+        const sounds = pieces[piece].notes.map(n => {
+            return new Audio(`/testNotes/${n.replace("n", "").replace("#", "sharp").replace(/\d+/g, match => String(Number(match) + 1))}.mp3`);
+        });
+
+        for (const audio of sounds) {
+            audio.currentTime = 0;
+            audio.play().catch(err => console.log(audio.src, err));
+            await new Promise(res => setTimeout(res, pieces[piece].tempo));
+        }
+    }
 
     return (<>
-        <MusicStaff notes={BachFugue} />
+        <MusicStaff notes={pieces[pieces.length - 1].notes} />
         <div style={containerStyle}>
             <div style={pianoContainerStyle}>
                 {/* White keys */}
@@ -875,6 +1547,7 @@ export const PianoPieces = () => {
                         <button
                             key={key.id}
                             style={whiteKeyStyle(activeKey === key.id)}
+                            onClick={playSong}
                         >
                             <span style={noteLabelStyle(false)}>
                                 {key.key}
@@ -890,6 +1563,7 @@ export const PianoPieces = () => {
                             key={key.id}
                             //onClick={() => handleKeyPress(key.note, key.id)}
                             style={blackKeyStyle(activeKey === key.id, key.position)}
+                            onClick={playSong}
                         >
                             <span style={noteLabelStyle(true)}>
                                 {key.key}
