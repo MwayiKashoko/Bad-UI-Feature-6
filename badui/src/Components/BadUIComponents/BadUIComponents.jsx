@@ -1527,8 +1527,7 @@ export const PianoPieces = () => {
                     const flatted = changeNote(expected, false);
 
                     // check if actual matches expected OR ±1 note
-                    if (actual !== expected && actual !== sharped && actual !== flatted) {
-                        console.log(actual, expected, sharped, flatted);
+                    if ((actual !== expected && (!actual.includes("#") || !actual.includes("b"))) || (actual !== sharped || actual !== flatted)) {
                         setCurrentPieceIndex(random(0, pieces.length - 1));
                         setStartedPlaying(false);
                         return [];
