@@ -1447,25 +1447,28 @@ export const PianoPieces = () => {
 
     const [currentPieceIndex, setCurrentPieceIndex] = useState(random(0, pieces.length - 1));
 
-    const changeNote = (note, higher) => {
-        if (!note.includes("#") || !note.includes("b")) return;
-        const letter = note[0];             // A–G
-        const accidental = note.slice(1);   // # or b or ""
+    const changeNote = (note, sharped) => {
+        if (!note.includes("#") && !note.includes("b")) return false;
+        if (note.includes("#") && sharped) return false;
+        if (note.includes("b") && !sharped) return false;
+
+        const letter = note[0];           // A–G
+        const accidental = note.slice(1); // "#" or "b"
 
         const letters = ["A", "B", "C", "D", "E", "F", "G"];
         let index = letters.indexOf(letter);
 
-        // shift
-        index = higher ? index + 1 : index - 1;
+        // move up or down one letter
+        index = !sharped ? index + 1 : index - 1;
 
         // wrap around
         if (index > 6) index = 0;
         if (index < 0) index = 6;
 
-        let newLetter = letters[index];
+        const newLetter = letters[index];
 
         // flip accidental
-        let newAccidental = accidental;
+        let newAccidental = "";
         if (accidental === "#") newAccidental = "b";
         else if (accidental === "b") newAccidental = "#";
 
@@ -1517,14 +1520,15 @@ export const PianoPieces = () => {
                     const actualFull = updated[i];
 
                     // compare letters only
-                    const expected = expectedFull.replace(/[0-9]/g, "");
+                    const expected = expectedFull.replace(/[0-9]/g, "").replace("n", "");
                     const actual = actualFull.replace(/[0-9]/g, "");
 
-                    const higher = changeNote(expected, true);
-                    const lower = changeNote(expected, false);
+                    const sharped = changeNote(expected, true);
+                    const flatted = changeNote(expected, false);
 
                     // check if actual matches expected OR ±1 note
-                    if (actual !== expected && actual !== higher && actual !== lower) {
+                    if (actual !== expected && actual !== sharped && actual !== flatted) {
+                        console.log(actual, expected, sharped, flatted);
                         setCurrentPieceIndex(random(0, pieces.length - 1));
                         setStartedPlaying(false);
                         return [];
