@@ -1508,11 +1508,11 @@ export const PianoPieces = () => {
             if (!startedPlaying) {
                 setStartedPlaying(true);
                 setKeysPressed([`${note.note}${3 + note.shift}`]);
-                return;
             }
 
             setKeysPressed(prev => {
                 const updated = [...prev, `${note.note}${3 + note.shift}`];
+                if (!startedPlaying) updated.pop();
                 const notes = pieces[currentPieceIndex].notes;
 
                 for (let i = 0; i < updated.length; i++) {
@@ -1527,8 +1527,9 @@ export const PianoPieces = () => {
                     const flatted = changeNote(expected, false);
 
                     // check if actual matches expected OR ±1 note
-                    if ((actual !== expected && (!actual.includes("#") || !actual.includes("b"))) || (actual !== sharped || actual !== flatted)) {
+                    if ((actual !== expected && (!expected.includes("#") && !expected.includes("b"))) || (actual !== expected && actual !== sharped && actual !== flatted && (expected.includes("#") || expected.includes("b")))) {
                         setCurrentPieceIndex(random(0, pieces.length - 1));
+                        setKeysPressed([]);
                         setStartedPlaying(false);
                         return [];
                     }
