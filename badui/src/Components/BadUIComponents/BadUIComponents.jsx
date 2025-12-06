@@ -1311,7 +1311,7 @@ export const PianoPieces = () => {
 
             //Bach Prelude in C# Major (WTC Book 2)
             {
-                name: "",
+                name: "Bach Prelude in C# Major (WTC Book 2)",
                 notes: ["G#3", "F3", "G#3", "C#4",
                     "G#3", "F#3", "G#3", "F3",
                     "G#3", "F3", "G#3", "C#4",
