@@ -333,8 +333,12 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
         for (let i = 0; i < currentPiece.length; i++) {
             for (let j = 0; j < currentPiece[i].length; j++) {
                 if (currentPiece[i][j] != 0) {
-                    if (!wallKickCondition && grid[i + currentRow][j + currentCol] != 0) {
-                        wallKickCondition = true;
+                    try {
+                        if (!wallKickCondition && grid[i + currentRow][j + currentCol] != 0) {
+                            wallKickCondition = true;
+                        }
+                    } catch (e) {
+
                     }
                 }
             }
@@ -555,8 +559,12 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
             for (let i = 0; i < currentPiece.length; i++) {
                 for (let j = 0; j < currentPiece[i].length; j++) {
                     if (currentPiece[i][j] != 0) {
-                        if (!wallKickCondition && grid[i + currentRow][j + currentCol] != 0) {
-                            wallKickCondition = true;
+                        try {
+                            if (!wallKickCondition && grid[i + currentRow][j + currentCol] != 0) {
+                                wallKickCondition = true;
+                            }
+                        } catch (e) {
+
                         }
                     }
                 }

@@ -224,30 +224,26 @@ export const SimpleMathQuestion = ({ user }) => {
     }
 
     return (
-        <span>
+        <>
             {text}
-            <MathJaxContext config={config}>
-                <MathJax inline>{formula}</MathJax>
-            </MathJaxContext>
 
-            <input ref={inputRef} /> <button onClick={() => {
-                if (checkIfMathRight() || isAbleToAuthenticate) {
-                    setNumSolvedEquations(numSolvedEquations + 1);
-                } else {
-                    setNumSolvedEquations(0);
-                }
+            {!isAbleToAuthenticate &&
+                <span>
+                    <MathJaxContext config={config}>
+                        <MathJax inline>{formula}</MathJax>
+                    </MathJaxContext>
 
-                setTypeOfEquation(random(1, 4));
+                    <input ref={inputRef} /> <button onClick={() => {
+                        if (checkIfMathRight() || isAbleToAuthenticate) {
+                            setIsAbleToAuthenticate(true);
+                            formula = ``;
+                            setText("Success!!! Press signup to login");
+                        }
 
-                if (numSolvedEquations === 3) {
-                    setIsAbleToAuthenticate(true);
-                    formula = ``;
-                    setText("Success!!! Press signup to login");
-                } else {
-                    setText("Please try again and solve this equation:");
-                }
-            }}>Submit Answer</button> <br /> <br />
-        </span>
+                        setTypeOfEquation(random(1, 4));
+                    }}>Submit Answer</button> <br /> <br />
+                </span>}
+        </>
     );
 }
 
