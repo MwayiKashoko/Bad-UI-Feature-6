@@ -1,5 +1,15 @@
 import React from "react";
+import "./Auth.css";
 
+/**
+ * Reusable authentication form component
+ * Used for both login and registration with conditional firstName field
+ * @param {Object} user - User object containing form field values
+ * @param {Function} onChange - Handler for input field changes
+ * @param {Function} onSubmit - Handler for form submission
+ * @param {boolean} isRegister - If true, shows firstName field and "Sign Up" button text
+ * @param {Object} errors - Object containing validation error messages
+ */
 const AuthForm = ({ user, onChange, onSubmit, isRegister = false, errors = {} }) => {
   return (
     <div className="auth-form-wrapper">

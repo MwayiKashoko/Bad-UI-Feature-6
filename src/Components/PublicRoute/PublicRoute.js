@@ -1,10 +1,15 @@
-//FILE CODE ADDED BELOW
-import React from "react"; //FROM LECTURE 17 CODE EXAMPLE
-import { Navigate } from "react-router-dom"; //FROM LECTURE 17 CODE EXAMPLE
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-//COMPONENT TO PROTECT PUBLIC ROUTES FROM AUTHENTICATED USERS
+/**
+ * Public route component that prevents authenticated users from accessing public pages
+ * Used for login/register pages - authenticated users should not see these pages
+ * @param {React.Component} element - Component to render if not authenticated
+ * @param {boolean} isAuthed - Authentication status (true if user is authenticated)
+ * @returns {React.Component|Navigate} - Navigate component if authenticated, Component if not
+ */
 const PublicRoute = ({ element: Component, isAuthed }) => {
-  //IF USER IS AUTHENTICATED, REDIRECT TO HOME PAGE
+  // Redirect authenticated users to home page to prevent access to login/register
   if (isAuthed) return <Navigate to="/" replace />;
   return <Component />;
 };

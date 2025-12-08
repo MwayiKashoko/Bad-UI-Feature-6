@@ -4,9 +4,20 @@ import * as Env from "./environments";
 import Parse from "parse";
 import { Auth0Provider } from "@auth0/auth0-react";
 
+/**
+ * Initialize Parse backend connection
+ * Parse handles email/password authentication and user data storage
+ */
 Parse.initialize(Env.REACT_APP_BACK4APP_APP_ID, Env.REACT_APP_BACK4APP_JS_KEY);
 Parse.serverURL = Env.REACT_APP_BACK4APP_URL;
 
+/**
+ * Main App component
+ * Wraps application with Auth0Provider for Google OAuth authentication
+ * The app uses dual authentication:
+ * - Parse: Email/password authentication
+ * - Auth0: Google OAuth social authentication
+ */
 function App() {
   return (
     <Auth0Provider

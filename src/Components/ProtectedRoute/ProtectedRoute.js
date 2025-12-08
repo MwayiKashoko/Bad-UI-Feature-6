@@ -1,12 +1,19 @@
-//FILE CODE ADDED BELOW
-import React from "react"; //FROM LECTURE 17 CODE EXAMPLE
-import { Navigate } from "react-router-dom"; //FROM LECTURE 17 CODE EXAMPLE
+import React from "react";
+import { Navigate } from "react-router-dom";
 
+/**
+ * Protected route component that restricts access to authenticated users only
+ * If user is not authenticated, redirects to home page
+ * @param {React.Component} element - Component to render if authenticated
+ * @param {boolean} isAuthed - Authentication status (true if user is authenticated)
+ * @returns {React.Component|Navigate} - Component if authenticated, Navigate component if not
+ */
 const ProtectedRoute = ({ element: Component, isAuthed }) => {
-  if (isAuthed) return <Component />; //BASED ON HINT FROM LECTURE 17 CODE EXAMPLE
+  if (isAuthed) return <Component />;
 
-  return <Navigate to="/" replace />; //LINE ADDED TO REDIRECT TO HOME PAGE WHEN NOT AUTHENTICATED
+  // Redirect unauthenticated users to home page
+  return <Navigate to="/" replace />;
 };
 
-export default ProtectedRoute; //FROM LECTURE 17 CODE EXAMPLE
+export default ProtectedRoute;
 

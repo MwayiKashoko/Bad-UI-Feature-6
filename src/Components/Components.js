@@ -5,36 +5,47 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
-import { useState, useEffect } from "react"; //LINE ADDED FOR DYNAMIC AUTH CHECK
+import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import AuthRegister from "./Auth/AuthRegister.js";
-import AuthLogin from "./Auth/AuthLogin.js"; //LINE ADDED
-import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.js"; //LINE ADDED
-import PublicRoute from "./PublicRoute/PublicRoute.js"; //LINE ADDED TO STOP AUTHENTICATED USERS FROM ACCESSING PUBLIC ROUTES
+import AuthLogin from "./Auth/AuthLogin.js";
+import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.js";
+import PublicRoute from "./PublicRoute/PublicRoute.js";
 import Main from "./Main/MainGood.js";
-import Home from "./Home/Home.js"; //LINE ADDED FOR HOME PAGE
-import { isAuthenticated } from "./Auth/AuthService.js"; //LINE ADDED
+import Home from "./Home/Home.js";
+import { isAuthenticated } from "./Auth/AuthService.js";
 
-//COMPONENT TO WRAP ROUTES AND PROVIDE DYNAMIC AUTH CHECK
+/**
+ * Route wrapper component that manages authentication state
+ * Checks both Parse and Auth0 authentication status dynamically
+ * Updates authorization state when route changes to handle login/logout scenarios
+ */
 const AuthRoutes = () => {
-  const location = useLocation(); //LINE ADDED TO TRACK ROUTE CHANGES
+  const location = useLocation();
   const { isAuthenticated: isAuth0Authenticated } = useAuth0();
+  
+  // Initialize authorization state by checking both authentication systems
+  // User can be authenticated via Parse (email/password) or Auth0 (Google OAuth)
   const [authorized, setAuthorized] = useState(() => 
     isAuthenticated() || isAuth0Authenticated
-  ); //LINE ADDED FOR DYNAMIC STATE WITH INITIAL CHECK
+  );
 
-  //EFFECT TO RE-CHECK AUTHENTICATION WHEN ROUTE CHANGES OR COMPONENT MOUNTS
+  // Re-check authentication status when route changes or Auth0 status updates
+  // This ensures protected/public routes respond correctly to login/logout events
   useEffect(() => {
-    setAuthorized(isAuthenticated() || isAuth0Authenticated); //LINE ADDED TO UPDATE AUTH STATUS DYNAMICALLY
-  }, [location, isAuth0Authenticated]); //LINE ADDED TO RE-CHECK ON ROUTE NAVIGATION
+    setAuthorized(isAuthenticated() || isAuth0Authenticated);
+  }, [location, isAuth0Authenticated]);
 
   return (
     <Routes>
-      {/*HOME PAGE - ACCESSIBLE TO EVERYONE*/}
+      {/* Home page - accessible to everyone */}
       <Route path="/" element={<Home />} />
-      {/*REDIRECT /auth TO /login*/}
+      
+      {/* Legacy route redirect */}
       <Route path="/auth" element={<Navigate to="/login" replace />} />
-      {/*PUBLIC ROUTES THAT SHOULD NOT BE ACCESSIBLE WHEN LOGGED IN LIKE INSTRUCTIONS SAY TO DO*/}
+      
+      {/* Public routes - redirect authenticated users to home page */}
+      {/* Prevents logged-in users from accessing login/register pages */}
       <Route
         path="/register"
         element={<PublicRoute element={AuthRegister} isAuthed={authorized} />}
@@ -43,21 +54,26 @@ const AuthRoutes = () => {
         path="/login"
         element={<PublicRoute element={AuthLogin} isAuthed={authorized} />}
       />
-      {/*PROTECTED ROUTE THAT REQUIRES AUTHENTICATION*/}
+      
+      {/* Protected route - requires authentication, redirects to home if not authenticated */}
       <Route
         path="/user"
         element={<ProtectedRoute element={Main} isAuthed={authorized} />}
       />
+      
+      {/* Catch-all route - redirect unknown paths to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
 
+/**
+ * Main routing component that wraps the application with React Router
+ */
 const Components = () => {
   return (
-    //CODE ADDED BELLOW BASED ON LECTURE 17 CODE EXAMPLE
     <Router>
-      <AuthRoutes /> {/*LINE ADDED TO USE DYNAMIC AUTH CHECK WRAPPER*/}
+      <AuthRoutes />
     </Router>
   );
 };

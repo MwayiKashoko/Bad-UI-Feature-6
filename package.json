@@ -19,7 +19,12 @@
     "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "netlify:login": "netlify login",
+    "netlify:deploy": "netlify deploy",
+    "netlify:deploy:prod": "netlify deploy --prod",
+    "netlify:dev": "netlify dev",
+    "netlify:status": "netlify status"
   },
   "eslintConfig": {
     "extends": [
@@ -38,5 +43,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "netlify-cli": "^23.12.3",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
   }
 }

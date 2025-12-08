@@ -1,0 +1,30 @@
+/* Main component styles */
+.main-container {
+  padding: 20px;
+}
+
+.main-container h1 {
+  color: var(--black);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.main-container button {
+  padding: 12px 24px;
+  font-size: 18px;
+  color: var(--white);
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  background-color: var(--black);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Zen Maru Gothic", sans-serif;
+  margin-top: 20px;
+}
+
+.main-container button:hover {
+  background-color: var(--white);
+  color: var(--black);
+}
+
