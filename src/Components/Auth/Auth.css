@@ -28,7 +28,7 @@
   top: 20px;
   right: 20px;
   padding: 0 20px 3px 20px;
-  height: 40px;
+  height: 45px;
   font-size: 20px;
   color: var(--black);
   border: 3px solid var(--black);
@@ -112,10 +112,10 @@
   padding-bottom: 15px;
   height: 50px;
   font-size: 18px;
-  color: var(--white);
+  color: var(--black);
   border: 3px solid var(--black);
   border-radius: 10px;
-  background-color: var(--black);
+  background-color: var(--white);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -124,11 +124,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 1;
 }
 
 .auth-submit-button:hover {
-  background-color: var(--white);
-  color: var(--black);
+  background-color: var(--black);
+  color: var(--white);
 }
 
 .auth-submit-button::selection {
