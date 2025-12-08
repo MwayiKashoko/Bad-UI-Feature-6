@@ -32,50 +32,40 @@ const Home = () => {
   const [clouds, setClouds] = useState([]);
 
   useEffect(() => {
-    // Generate clouds with random positions (no distinct channels)
+    // Generate clouds in distinct channels spaced 500px apart
     const generateClouds = () => {
       const NUM_CLOUDS = 8; // Total number of clouds
-      const VIEWPORT_HEIGHT = window.innerHeight;
-      
-      // Welcome text area - avoid placing clouds here
-      // Welcome container has margin-top: 300px and padding, text is ~48px
-      const WELCOME_START_PX = 300; // Start of welcome text area
-      const WELCOME_END_PX = 450; // End of welcome text area (300 + padding + text height)
-      const BUFFER_ZONE = 100; // Buffer zone to ensure clouds don't overlap welcome text
-      
-      // Define areas where clouds can appear (above and below welcome text)
-      const TOP_AREA_START = 50; // Start from 50px from top
-      const TOP_AREA_END = WELCOME_START_PX - BUFFER_ZONE; // End before welcome text buffer
-      const BOTTOM_AREA_START = WELCOME_END_PX + BUFFER_ZONE; // Start below welcome text buffer
-      const BOTTOM_AREA_END = VIEWPORT_HEIGHT - 100; // Don't go all the way to bottom, leave 100px margin
+      const CHANNEL_SPACING = 500; // Space between channels in pixels
       
       const cloudConfigs = [];
       let cloudId = 0;
 
-      // Generate clouds with random positions
+      // Generate clouds in distinct channels
+      let cumulativeDelay = 0; // Track cumulative delay for sequential launches
       for (let i = 0; i < NUM_CLOUDS; i++) {
-        // Randomly decide if cloud goes above or below welcome text
-        const isAbove = Math.random() < 0.5;
-        
-        // Random vertical position within the chosen area
-        const top = isAbove
-          ? TOP_AREA_START + Math.random() * (TOP_AREA_END - TOP_AREA_START)
-          : BOTTOM_AREA_START + Math.random() * (BOTTOM_AREA_END - BOTTOM_AREA_START);
+        // Each cloud gets its own channel, spaced 500px apart
+        const top = 50 + (i * CHANNEL_SPACING); // Start at 50px, then 500px increments
         
         // Random speed variation
         const baseSpeed = 30;
         const speedVariation = (Math.random() - 0.5) * 10; // ±5 seconds variation
         const speed = baseSpeed + speedVariation;
         
-        // Random delay to spread clouds out
-        const delay = Math.random() * 5; // Random delay 0-5s
+        // Sequential delay: each cloud waits 10-20 seconds after the previous one
+        let delay = 0;
+        if (i > 0) {
+          // Add 10-20 second delay after the previous cloud
+          const delayBetweenClouds = 10 + Math.random() * 10; // Random delay between 10-20 seconds
+          cumulativeDelay += delayBetweenClouds;
+          delay = cumulativeDelay;
+        }
         
         cloudConfigs.push({
           id: cloudId++,
           cloudNumber: Math.floor(Math.random() * 12) + 1, // Random cloud 1-12
-          top: top, // Random position
+          top: top, // Channel position spaced 500px apart
           speed: speed, // Varied speed
-          delay: delay, // Random delay
+          delay: delay, // Sequential delay: 10-20s after previous cloud
         });
       }
 
