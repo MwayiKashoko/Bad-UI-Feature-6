@@ -46,9 +46,9 @@ const Home = () => {
         // Each cloud gets its own channel, spaced 500px apart
         const top = 50 + (i * CHANNEL_SPACING); // Start at 50px, then 500px increments
         
-        // Random speed variation
+        // Random speed variation - wider range for more variety
         const baseSpeed = 30;
-        const speedVariation = (Math.random() - 0.5) * 10; // ±5 seconds variation
+        const speedVariation = (Math.random() - 0.5) * 30; // ±15 seconds variation (15-45 seconds total)
         const speed = baseSpeed + speedVariation;
         
         // Sequential delay: each cloud waits 10-20 seconds after the previous one
