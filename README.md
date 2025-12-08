@@ -18,8 +18,8 @@ REFERENCES
 
 
 
-- Student A used Cursor (with Claude-4.5-Sonnet) for debugging and JS syntax assistance
-
+- Student A used Cursor (with Claude-4.5-Sonnet) for Vibecoding
+- Student B used ChatGPT u
 
 
 <br>

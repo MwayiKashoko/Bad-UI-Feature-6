@@ -26,6 +26,11 @@ function App() {
       authorizationParams={{
         redirect_uri: window.location.origin
       }}
+      // Required for production: Add your Netlify URL to Auth0 dashboard
+      // Allowed Callback URLs: https://feature6.netlify.app
+      // Allowed Logout URLs: https://feature6.netlify.app
+      // Allowed Web Origins: https://feature6.netlify.app
+      cacheLocation="localstorage"
     >
       <Components />
     </Auth0Provider>

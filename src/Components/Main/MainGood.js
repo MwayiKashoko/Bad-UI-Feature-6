@@ -42,13 +42,12 @@ const MainGood = () => {
 
   // Using Tailwind CSS utility classes for styling
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="p-6 max-w-2xl mx-auto main-container">
       {/* Tailwind: text-xl for larger heading, font-bold for weight, mb-4 for margin */}
       <h1 className="text-xl font-bold mb-4 text-white">User: {userName}</h1>
-      {/* Tailwind: button styling with hover effects, rounded corners, padding, and transitions */}
+      {/* Button styling matching login and sign up buttons - black and white */}
       <button 
         onClick={handleLogout}
-        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
       >
         Logout
       </button>

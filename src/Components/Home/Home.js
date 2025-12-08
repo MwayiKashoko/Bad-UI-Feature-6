@@ -168,9 +168,9 @@ const Home = () => {
       )}
       {isLoggedIn && (
         <div className="home-auth-container flex justify-center mb-8">
-          {/* Tailwind: logout button with red styling and hover effects */}
+          {/* Logout button matching login and sign up button styling */}
           <button 
-            className="home-button bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-xl" 
+            className="home-button" 
             onClick={handleLogout}
           >
             Logout
