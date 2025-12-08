@@ -25,7 +25,7 @@
   right: 20px;
   display: flex;
   gap: 10px;
-  z-index: 10;
+  z-index: 100;
 }
 
 .home-link {
@@ -70,6 +70,18 @@
   aspect-ratio: 1;
   border: 3px solid var(--black);
   opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.grid-box-label {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--black);
+  text-align: center;
+  padding: 10px;
 }
 
 /* Cloud animation container */
@@ -111,4 +123,50 @@
     opacity: 0; /* Fade out */
   }
 }
+
+/* Modal overlay for the white square */
+.square-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* White square modal content */
+.square-modal-content {
+  width: 800px;
+  height: 700px;
+  background-color: var(--primary-blue);
+  border: 4px solid var(--black);
+  border-radius: 15px;
+  position: relative;
+}
+
+/* Close button (X) in top right corner */
+.modal-close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--black);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  line-height: 1;
+  padding: 0;
+}
+
 

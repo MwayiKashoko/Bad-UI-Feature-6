@@ -49,7 +49,7 @@
 }
 
 .auth-form-container h1 {
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
   font-size: 32px;
   font-weight: 700;
   color: var(--black);
@@ -233,5 +233,75 @@
   color: #666;
   font-size: 14px;
   font-weight: 500;
+}
+
+/* Phone number slider styling */
+.phone-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  background: #e0e0e0;
+  outline: none;
+  cursor: pointer;
+}
+
+.phone-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--black);
+  border: 2px solid var(--black);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.phone-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.phone-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--black);
+  border: 2px solid var(--black);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.phone-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Phone number submit button styling */
+.phone-submit-button {
+  width: 100%;
+  padding: 12px 20px;
+  padding-bottom: 15px;
+  height: 50px;
+  font-size: 18px;
+  color: var(--white);
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  background-color: var(--black);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Zen Maru Gothic", sans-serif;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+.phone-submit-button:hover {
+  background-color: var(--white);
+  color: var(--black);
+  border: 3px solid var(--black);
 }
 

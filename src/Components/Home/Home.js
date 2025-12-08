@@ -4,6 +4,9 @@ import { isAuthenticated, logoutUser } from "../Auth/AuthService.js";
 import { useAuth0 } from "@auth0/auth0-react";
 import Parse from "parse";
 import Cloud from "./Cloud";
+import PhoneNumber from "../BadUI/PhoneNumber";
+import Birthday from "../BadUI/Birthday";
+import Tetris from "../BadUI/Tetris";
 import "./Home.css";
 
 /**
@@ -30,6 +33,10 @@ const Home = () => {
 
   // Generate random cloud configurations
   const [clouds, setClouds] = useState([]);
+  
+  // State for modal/square visibility
+  const [showSquare, setShowSquare] = useState(false);
+  const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
 
   useEffect(() => {
     // Generate clouds in distinct channels spaced 500px apart
@@ -75,6 +82,20 @@ const Home = () => {
     generateClouds();
   }, []);
 
+  // Prevent body scrolling when modal is open
+  useEffect(() => {
+    if (showSquare) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup: restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showSquare]);
+
   /**
    * Handles logout for both authentication systems
    * Auth0: Uses Auth0 logout with redirect to home
@@ -87,6 +108,23 @@ const Home = () => {
       await logoutUser();
       navigate("/");
     }
+  };
+
+  /**
+   * Handles grid box click - opens the white square modal
+   * First box (index 0) shows PhoneNumber component
+   */
+  const handleGridBoxClick = (index) => {
+    setSelectedBoxIndex(index);
+    setShowSquare(true);
+  };
+
+  /**
+   * Handles closing the square modal
+   */
+  const handleCloseSquare = () => {
+    setShowSquare(false);
+    setSelectedBoxIndex(null);
   };
 
   return (
@@ -142,9 +180,46 @@ const Home = () => {
       {/* Tailwind: grid layout with responsive columns and gap spacing */}
       <div className="home-grid-container grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 p-4">
         {Array.from({ length: 12 }).map((_, index) => (
-          <div key={index} className="home-grid-box"></div>
+          <div 
+            key={index} 
+            className="home-grid-box"
+            onClick={() => handleGridBoxClick(index)}
+            style={{ cursor: 'pointer' }}
+          >
+            {index === 0 && (
+              <div className="grid-box-label">Phone Number</div>
+            )}
+            {index === 1 && (
+              <div className="grid-box-label">Birthday</div>
+            )}
+            {index === 2 && (
+              <div className="grid-box-label">Tetris CAPTCHA</div>
+            )}
+          </div>
         ))}
       </div>
+      
+      {/* Modal overlay and white square */}
+      {showSquare && (
+        <div className="square-modal-overlay" onClick={handleCloseSquare}>
+          <div className="square-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="modal-close-button"
+              onClick={handleCloseSquare}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            {selectedBoxIndex === 0 ? (
+              <PhoneNumber onClose={handleCloseSquare} />
+            ) : selectedBoxIndex === 1 ? (
+              <Birthday onClose={handleCloseSquare} />
+            ) : selectedBoxIndex === 2 ? (
+              <Tetris onClose={handleCloseSquare} />
+            ) : null}
+          </div>
+        </div>
+      )}
     </>
   );
 };
