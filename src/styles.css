@@ -1,0 +1,334 @@
+
+:root {
+  --primary-blue: #0269fe;
+  --black: #000000;
+  --white: #ffffff;
+}
+
+* {
+  font-family: "Zen Maru Gothic", sans-serif;
+}
+
+/* Default selection: white background with black text */
+::selection {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+::-moz-selection {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+/* Black background elements: black selection background with white text */
+.auth-submit-button::selection {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+.auth-submit-button::-moz-selection {
+  background-color: var(--black);
+  color: var(--white);
+}
+
+body {
+  margin: 0px;
+  background-color: var(--primary-blue);
+}
+
+.App {
+  text-align: center;
+}
+
+.home-button {
+  padding: 0 20px 3px 20px;
+  height: 45px;
+  font-size: 20px;
+  color: var(--black);
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.home-button:hover {
+  transform: translateY(-5px);
+}
+
+.home-auth-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.home-link {
+  text-decoration: none;
+}
+
+.home-welcome-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: auto;
+  padding: 40px 20px 20px 20px;
+  margin-top: 300px;
+}
+
+.home-welcome-text {
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--white);
+  text-align: center;
+  margin: 0;
+  text-shadow: 3px 3px 0px var(--black);
+}
+
+.auth-form-container {
+  width: 380px;
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding-top: 35px;
+  padding-bottom: 35px;
+}
+
+.auth-page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 15px;
+  position: relative;
+}
+
+.back-to-home-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 0 20px 3px 20px;
+  height: 40px;
+  font-size: 20px;
+  color: var(--black);
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  background-color: var(--white);
+  z-index: 1000;
+}
+
+.back-to-home-button:hover {
+  transform: translateY(-5px);
+}
+
+.auth-form-container h1 {
+  margin: 0 0 20px 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.auth-form-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0 30px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--black);
+  text-align: left;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: "Zen Maru Gothic", sans-serif;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(2, 105, 254, 0.1);
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+.auth-submit-button {
+  width: 100%;
+  padding: 12px 20px;
+  padding-bottom: 15px;
+  height: 50px;
+  font-size: 18px;
+  color: var(--white);
+  border: 3px solid var(--black);
+  border-radius: 10px;
+  background-color: var(--black);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Zen Maru Gothic", sans-serif;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-submit-button:hover {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+.auth-form-container p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.auth-form-container a {
+  color: var(--black);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.auth-form-container a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
+  text-align: left;
+}
+
+.error-general {
+  background-color: #ffebee;
+  border: 2px solid #d32f2f;
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.input-error {
+  border-color: #d32f2f !important;
+  background-color: #fff5f5;
+}
+
+.input-error:focus {
+  border-color: #d32f2f !important;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1) !important;
+}
+
+.google-auth-button {
+  width: calc(100% - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--black);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 10px 10px 10px;
+}
+
+.google-auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 15px 0;
+  width: 70%;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.auth-divider span {
+  padding: 0 15px;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.home-grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 200px auto 0 auto;
+}
+
+.home-grid-box {
+  background-color: var(--white);
+  border-radius: 15px;
+  aspect-ratio: 1;
+  border: 3px solid var(--black);
+}
+
