@@ -36,6 +36,8 @@ Game.prototype = {
 
 		switch (game) {
 			case "smb":
+				break;
+			case "smbtll":
 				//Overworld background
 				this.backgroundList[0] = new Background(`${pathname}/images/OverworldBackground.png`, 0, 80, 1920, 440);
 
@@ -118,9 +120,7 @@ Game.prototype = {
 				};
 
 				this.mario = new Player(3, this.gravity, this.music, this.sounds, 0);
-				break;
 
-			case "smbtll":
 				//Overworld background
 				this.backgroundList[0] = new Background(`${pathname}/images/OverworldBackground.png`, 0, 80, 1920, 440);
 
@@ -216,70 +216,12 @@ Game.prototype = {
 
 				//All the super mario bros lost levels levels
 				this.levels = {
+					"1-1": this.level1_1,
+					"8-3": this.level8_3,
 					"D-1": this.levelD_1,
 				};
 
 				//This is what the user will play as
-				this.mario = new Player(3, this.gravity, this.music, this.sounds, 0);
-				break;
-
-			case "smm":
-				//Super Mario Maker: A mode that allows the player to create, download, and upload levels that can be played in the engine
-				//Overworld background
-				this.backgroundList[0] = new Background(`${pathname}/images/OverworldBackground.png`, 0, 80, 1920, 440);
-
-				//Athletic background
-				this.backgroundList[1] = new Background(`${pathname}/images/AthleticBackground.png`, 0, 80, 1920, 440);
-
-				//world 8 overworld background (end background)
-				this.backgroundList[2] = new Background(`${pathname}/images/EndBackground.png`, 0, 80, 1920, 440);
-
-				//smtll backgrounds
-				this.backgroundList[3] = new Background(`${pathname}/images/Overworld1Background.png`, 0, 80, 1920, 440);
-
-				//Athletic background
-				this.backgroundList[4] = new Background(`${pathname}/images/Athletic1Background.png`, 0, 80, 1920, 440);
-
-				//Hill Background
-				this.backgroundList[5] = new Background(`${pathname}/images/HillBackground.png`, 0, 80, 1920, 440);
-
-				//Snow Background
-				this.backgroundList[6] = new Background(`${pathname}/images/SnowHillBackground.png`, 0, 80, 1920, 440);
-
-				//Snow overworld background
-				this.backgroundList[7] = new Background(`${pathname}/images/SnowOverworldBackground.png`, 0, 80, 1920, 440);
-
-				//Mushroom overworld background
-				this.backgroundList[8] = new Background(`${pathname}/images/MushroomHillBackground.png`, 0, 80, 1920, 440);
-
-				//Underwater Hill background
-				this.backgroundList[9] = new Background(`${pathname}/images/UnderwaterHillBackground.png`, 0, 80, 1920, 440);
-
-				this.levelMap = [
-					[" ", " ", " ", " ", " ", " ", "e", "s", "s", "s", "s", " ", " ", " ", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", " ", "p", "w", "s", "s", "s", "s", "s", "s", "$", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", " ", "b", "b", "b", "c", "c", "b", "c", " ", " ", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", "b", "c", "b", "c", "c", "c", "b", "c", "c", "c", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", "b", "c", "b", "b", "c", "c", "c", "b", "c", "c", "c", " ", " ", " ", " "],
-					[" ", " ", " ", " ", "b", "b", "c", "c", "c", "c", "b", "b", "b", "b", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", " ", " ", "c", "c", "c", "c", "c", "c", "c", " ", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", " ", "b", "b", "s", "b", "b", "b", " ", " ", " ", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", "$", "b", "b", "s", "b", "b", "s", "{", "}", "b", " ", " ", " ", " ", " "],
-					[" ", " ", " ", "$", "b", "b", "b", "s", "s", "s", "s", "/", "|", "b", "$", " ", " ", " ", " "],
-					[" ", " ", " ", "p", "p", "b", "s", "p", "s", "s", "p", "s", "b", "p", "p", " ", " ", " ", " "],
-					[" ", " ", " ", "p", "p", "p", "s", "s", "s", "s", "s", "s", "p", "p", "p", " ", " ", " ", " "],
-					[" ", " ", " ", "p", "p", "s", "s", "s", "s", "s", "s", "s", "s", "p", "p", " ", " ", " ", " "],
-					[" ", " ", " ", " ", " ", "s", "s", "s", " ", " ", "s", "s", "s", " ", " ", " ", " ", " ", " "],
-					[" ", " ", " ", " ", "b", "b", "b", " ", " ", " ", " ", "b", "b", "b", " ", " ", " ", " ", " "]
-				];
-
-				this.level1_1Area = new Area(this.levelMap, "Overworld", true, "#9391ff", this.sounds)
-				this.level1_1 = new Level([this.level1_1Area]);
-
-				this.levels = {
-					"1-1": this.level1_1
-				}
-
 				this.mario = new Player(3, this.gravity, this.music, this.sounds, 0);
 				break;
 			default:

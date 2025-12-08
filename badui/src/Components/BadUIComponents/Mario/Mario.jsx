@@ -12,10 +12,10 @@ export let shiftWidth = 80;
 export let newWidth;
 
 //Determines which game is currently running (smb, smbll smb2, smb3, smw, nsmbds, nsmbwii, smm...)
-export let game = "smb";
+export let game = "smbtll";
 //current pathname of the url
 //Pathname to get all sounds, music, images, etc.
-export let pathname = `/games/smb`;
+export let pathname = `/games/smbtll`;
 //If the game has ended then the code will reset back to the game selection screen
 export let gameEnded = false;
 

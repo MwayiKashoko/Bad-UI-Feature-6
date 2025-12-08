@@ -433,7 +433,7 @@ export const MarioGame = React.memo(function MarioGame({ user, ui }) {
 
     // 5. INITIAL TEXT
     useEffect(() => {
-        setText("Could not verify that you're a human. Finish level 1-1.");
+        setText("Could not verify that you're a human. Finish level 1-1, and 8-3 and D-1.");
     }, []);
 
     return (
