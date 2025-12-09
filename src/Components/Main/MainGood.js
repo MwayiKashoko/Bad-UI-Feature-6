@@ -6,12 +6,7 @@ import Parse from "parse";
 import "./Main.css";
 
 /**
- * Main user dashboard component (protected route)
- * 
- * This is the user's personal dashboard, accessible only after authentication.
- * Displays user information and provides logout functionality. The component
- * adapts to show information from either Parse or Auth0 based on which system
- * authenticated the user.
+ * Custom elements on home that are protected 
  */
 const MainGood = () => {
   const navigate = useNavigate();

@@ -23,9 +23,6 @@ import { isAuthenticated } from "./Auth/AuthService.js";
  * login/logout events in real-time. Without this, routes might show stale
  * authentication state after a user logs in or out.
  * 
- * Why check both systems?
- * - Parse: Synchronous check via Parse.User.current()
- * - Auth0: Asynchronous check via useAuth0 hook (may take time to initialize)
  * 
  * We check both because users can authenticate via either system, and we need
  * to know their status regardless of which method they used.

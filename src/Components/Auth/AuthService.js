@@ -6,12 +6,6 @@ import Parse from "parse";
  * This service handles all Parse-specific authentication operations, separate from
  * Auth0's OAuth flow. Keeping them separate allows each system to work independently
  * while sharing the same protected routes.
- * 
- * Why dual authentication?
- * - Some users prefer traditional email/password (Parse)
- * - Others prefer quick social login (Auth0/Google)
- * - Both systems authenticate to the same protected routes
- * - Users can choose their preferred method
  */
 
 /**

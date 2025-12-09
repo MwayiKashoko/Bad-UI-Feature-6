@@ -8,10 +8,6 @@ import { Navigate, useLocation } from "react-router-dom";
  * would be confusing UX. Instead, they're redirected to their intended destination
  * (if they came from a protected route) or the home page.
  * 
- * Why check multiple redirect sources?
- * - location.state: From programmatic navigation (e.g., Link with state)
- * - sessionStorage: Persisted across page refreshes and Auth0 redirects
- * - Default "/": Fallback if no redirect path exists
  * 
  * Clearing sessionStorage after reading prevents stale redirect paths from
  * persisting after the user has already been redirected.

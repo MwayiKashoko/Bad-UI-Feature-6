@@ -1,8 +1,5 @@
 /**
  * Utility functions for authentication form validation and error handling
- * 
- * These functions provide client-side validation before submitting to the backend.
- * This improves UX by giving immediate feedback without waiting for server responses.
  */
 
 /**
@@ -13,8 +10,6 @@
  * - @ symbol
  * - Domain name
  * - Top-level domain (.com, .org, etc.)
- * 
- * Note: This is a basic check. Backend validation provides more thorough verification.
  * 
  * @param {string} email - Email address to validate
  * @returns {boolean} - True if email is valid, false otherwise
@@ -94,10 +89,6 @@ export const validateRegisterForm = (userData) => {
  * Provides immediate feedback by removing error messages as soon as the user
  * begins correcting their input. This creates a more responsive, less frustrating UX.
  * 
- * Why clear general errors too?
- * - General errors (like "Invalid credentials") are often caused by specific fields
- * - Clearing them when user types shows the form is responsive to their actions
- * - Prevents error messages from persisting after user has started fixing issues
  * 
  * @param {Object} errors - Current errors object from component state
  * @param {string} fieldName - Name of the field being edited (e.g., "email", "password")

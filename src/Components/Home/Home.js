@@ -61,12 +61,6 @@ const Home = () => {
     /**
      * Generates cloud configurations with varied properties for visual interest
      * 
-     * Strategy:
-     * - Each cloud gets its own vertical channel (spaced 500px apart) to prevent overlap
-     * - Random speeds create natural variation (15-45 seconds to cross screen)
-     * - Sequential delays ensure clouds don't all start at once
-     * - Random cloud images (1-12) add visual diversity
-     * 
      * This creates a continuous, non-repetitive animation effect.
      */
     const generateClouds = () => {
@@ -118,9 +112,6 @@ const Home = () => {
   /**
    * Handles logout for both authentication systems
    * 
-   * Different logout methods are needed because Parse and Auth0 manage sessions
-   * independently. We check which system authenticated the user and call the
-   * appropriate logout method.
    * 
    * Auth0 logout redirects to home page (handled by Auth0)
    * Parse logout clears local session, then we navigate manually
