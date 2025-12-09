@@ -731,7 +731,7 @@ export const gameEngine = (canvas) => {
                 });
             });
 
-            if (areas.background !== null) {
+            if (areas.background === null) {
                 areas.background = new Background(areas.background.img.src, areas.background.constantX, areas.background.constantY, areas.background.width, areas.background.height);
             }
 
@@ -1133,7 +1133,7 @@ export const gameEngine = (canvas) => {
         new Image(),
         new Image()
     ];
-    
+
     // Set up images with error handling
     hudCoins.forEach((img, index) => {
         img.onerror = () => {

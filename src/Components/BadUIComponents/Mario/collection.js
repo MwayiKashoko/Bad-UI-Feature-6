@@ -114,10 +114,6 @@ Game.prototype = {
 				this.level8_3Overworld = new Area(this.level8_3Overworld, "Overworld", true, "#9391ff", this.sounds, this.backgroundList[2]);
 				this.level8_3 = new Level([this.level8_3Overworld]);
 				//All the super mario bros levels
-				this.levels = {
-					"1-1": this.level1_1,
-					"8-3": this.level8_3,
-				};
 
 				this.mario = new Player(3, this.gravity, this.music, this.sounds, 0);
 
