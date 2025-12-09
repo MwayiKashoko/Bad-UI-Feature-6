@@ -9,16 +9,18 @@ import "./Auth.css";
 
 /**
  * Registration component for new user sign-up
- * Handles both Parse (email/password) and Auth0 (Google OAuth) authentication
- * Redirects authenticated users away from registration page
- * Supports redirect parameter to return users to their intended destination after signup
- * Hides URL parameter after reading it and preserves it when navigating to login
+ * 
+ * Similar structure to AuthLogin but handles user creation instead of authentication.
+ * Uses the same redirect preservation logic to return users to their intended destination
+ * after successful registration.
+ * 
+ * Redirect handling mirrors AuthLogin to provide consistent UX across auth flows.
  */
 const AuthRegister = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const { loginWithRedirect } = useAuth0();
   const [newUser, setNewUser] = useState({
     firstName: "",
     email: "",
@@ -30,7 +32,7 @@ const AuthRegister = () => {
   const [errors, setErrors] = useState({});
   
   // Store redirect path in state - read from URL or location state, then clean up URL
-  const [redirectPath, setRedirectPath] = useState(() => {
+  const [redirectPath] = useState(() => {
     const urlRedirect = searchParams.get("redirect");
     const stateRedirect = location.state?.redirectPath;
     const storedRedirect = sessionStorage.getItem("authRedirectPath");

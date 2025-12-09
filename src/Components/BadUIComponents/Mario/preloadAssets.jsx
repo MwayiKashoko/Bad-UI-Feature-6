@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 
 export const imagePaths = [
   "games/smb/images/0images.sh",

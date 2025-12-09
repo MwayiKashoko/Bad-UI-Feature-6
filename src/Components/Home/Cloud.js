@@ -16,11 +16,23 @@ import cloud11 from "../../Media/Clouds/cloud-11.svg";
 import cloud12 from "../../Media/Clouds/cloud-12.svg";
 
 /**
- * Cloud component that animates a single cloud from left to right
- * with random properties: cloud type, height, speed, and delay
+ * Cloud component that renders a single animated cloud
+ * 
+ * This is a presentational component that receives animation properties from
+ * the parent (Home.js). The parent generates random properties to create
+ * varied, non-repetitive cloud animations.
+ * 
+ * CSS handles the actual animation (via @keyframes), while this component
+ * just applies the dynamic properties (position, speed, delay).
+ * 
+ * @param {number} cloudNumber - Which cloud image to use (1-12)
+ * @param {number} top - Vertical position in pixels
+ * @param {number} speed - Animation duration in seconds
+ * @param {number} delay - Start delay in seconds
  */
 const Cloud = ({ cloudNumber, top, speed, delay }) => {
   // Map cloud numbers to imported SVG files
+  // Using a lookup object is more efficient than conditional logic
   const cloudImages = {
     1: cloud1,
     2: cloud2,
@@ -43,6 +55,8 @@ const Cloud = ({ cloudNumber, top, speed, delay }) => {
       src={cloudSrc}
       alt={`Cloud ${cloudNumber}`}
       className="animated-cloud"
+      // Inline styles for dynamic values (position, animation timing)
+      // CSS class handles the animation keyframes
       style={{
         top: `${top}px`,
         animationDuration: `${speed}s`,

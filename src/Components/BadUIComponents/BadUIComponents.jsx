@@ -121,6 +121,40 @@ export const random = (min, max) => {
     return Math.floor((max - min + 1) * Math.random()) + min;
 };
 
+/**
+ * Utility function to convert component names to user-friendly display names
+ * Centralizes the mapping logic to avoid duplication across components
+ * 
+ * This mapping ensures consistent naming across the application:
+ * - Home page grid displays
+ * - Bad UI page titles
+ * - Navigation and routing
+ * 
+ * @param {string} componentName - The internal component name (e.g., "BirthdayGuesser")
+ * @returns {string} - User-friendly display name (e.g., "Birthday Input")
+ */
+export const getComponentDisplayName = (componentName) => {
+  // Map internal component names to user-friendly display names
+  // These names appear in the UI and should be clear and descriptive
+  const nameMap = {
+    "BirthdayGuesser": "Birthday Input",
+    "PhoneNumberRange": "Phone Input",
+    "MathCAPTCH": "Math CAPTCHA",
+    "GuessTheNumber": "Number Guesser CAPTCHA",
+    "TetrisMasterMode": "Tetris CAPTCHA (Master)",
+    "TetrisInvisibleMode": "Tetris CAPTCHA (Invisible)",
+    "TetrisSprint": "Tetris CAPTCHA (Sprint)",
+    "TetrisFast": "Tetris CAPTCHA (Fast)",
+    "TetrisMarathon": "Tetris CAPTCHA (Marathon)",
+    "MarioGame": "Mario CAPTCHA",
+    "PianoPieces": "Piano CAPTCHA",
+  };
+
+  // Return mapped name if exists, otherwise convert camelCase to Title Case
+  // This fallback handles any new components that haven't been explicitly mapped
+  return nameMap[componentName] || componentName.replace(/([A-Z])/g, " $1").trim();
+};
+
 // nCk
 const combination = (n, k) => {
     let num = 1, den = 1;

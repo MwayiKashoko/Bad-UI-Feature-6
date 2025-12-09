@@ -314,7 +314,7 @@ const preloadSounds = () => {
 
 export const PianoPieces = () => {
     //q to ' from Bb2 to E4 originally
-    const [activeKey, setActiveKey] = useState(null);
+    const [activeKey] = useState(null);
     const [startedPlaying, setStartedPlaying] = useState(false);
     const [keysPressed, setKeysPressed] = useState([]);
     const [completedCaptcha, setCompletedCaptcha] = useState(false);
@@ -327,7 +327,7 @@ export const PianoPieces = () => {
         setIsAbleToAuthenticate(false);
     };
 
-    const whiteKeys = [
+    const whiteKeys = useMemo(() => [
         { note: 'B', id: -1, key: "a", shift: -1 },
         { note: 'C', id: 0, key: "s", shift: 0 },
         { note: 'D', id: 2, key: "d", shift: 0 },
@@ -339,9 +339,9 @@ export const PianoPieces = () => {
         { note: 'C', id: 12, key: "l", shift: 1 },
         { note: 'D', id: 14, key: ";", shift: 1 },
         { note: 'E', id: 16, key: "'", shift: 1 }
-    ];
+    ], []);
 
-    const whiteKeyLetters = {
+    const whiteKeyLetters = useMemo(() => ({
         "a": 0,
         "s": 1,
         "d": 2,
@@ -353,9 +353,9 @@ export const PianoPieces = () => {
         "l": 8,
         ";": 9,
         "'": 10
-    };
+    }), []);
 
-    const blackKeys = [
+    const blackKeys = useMemo(() => [
         { note: 'Bb', id: -2, position: 0, key: "q", shift: -1 },
         { note: 'Db', id: 1, position: 2, key: "e", shift: 0 },
         { note: 'Eb', id: 3, position: 3, key: "r", shift: 0 },
@@ -364,9 +364,9 @@ export const PianoPieces = () => {
         { note: 'Bb', id: 10, position: 7, key: "i", shift: 0 },
         { note: 'Db', id: 13, position: 9, key: "p", shift: 1 },
         { note: 'Eb', id: 15, position: 10, key: "[", shift: 1 },
-    ];
+    ], []);
 
-    const blackKeyLetters = {
+    const blackKeyLetters = useMemo(() => ({
         "q": 0,
         "e": 1,
         "r": 2,
@@ -375,12 +375,7 @@ export const PianoPieces = () => {
         "i": 5,
         "p": 6,
         "[": 7
-    };
-
-    const handleKeyPress = (note, id) => {
-        setActiveKey(id);
-        setTimeout(() => setActiveKey(null), 200);
-    };
+    }), []);
 
     const containerStyle = {
         display: 'flex',

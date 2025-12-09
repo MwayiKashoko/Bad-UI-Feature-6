@@ -107,7 +107,6 @@ export const SimpleMathQuestion = ({ user }) => {
     */
     const [typeOfEquation, setTypeOfEquation] = useState(random(1, 4));
     const [text, setText] = useState("Could not verify that you are a human.\nPlease solve the following math problem to prove you're not a human");
-    const [numSolvedEquations, setNumSolvedEquations] = useState(0);
     const [inputValue, setInputValue] = useState("");
     const [completed, setCompleted] = useState(false);
     const inputRef = useRef();
@@ -134,14 +133,6 @@ export const SimpleMathQuestion = ({ user }) => {
             num4 = random(2, 4);
 
             formula = `Sum from n=${num1} to ${num2} of ${num3}*n^${num4}`;
-
-            let actualAnswer = 0;
-
-            for (let i = num1; i <= num2; i++) {
-                actualAnswer += num3 * i ** num4;
-            }
-
-            //console.log(actualAnswer);
 
             break;
         case 4:

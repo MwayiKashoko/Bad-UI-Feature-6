@@ -7,34 +7,42 @@ import "./Main.css";
 
 /**
  * Main user dashboard component (protected route)
- * Displays user information and logout functionality
- * Handles both Parse and Auth0 authentication systems
+ * 
+ * This is the user's personal dashboard, accessible only after authentication.
+ * Displays user information and provides logout functionality. The component
+ * adapts to show information from either Parse or Auth0 based on which system
+ * authenticated the user.
  */
 const MainGood = () => {
   const navigate = useNavigate();
   const { isAuthenticated: isAuth0Authenticated, logout: auth0Logout, user: auth0User } = useAuth0();
   
-  // Get current user from Parse (if authenticated via email/password)
+  // Get current user from Parse (will be null if authenticated via Auth0)
   const currentUser = Parse.User.current();
   
   // Determine display name based on authentication method
-  // Parse users: firstName + lastName
-  // Auth0 users: name or email from Auth0 profile
+  // Parse stores firstName and lastName separately, so we combine them
+  // Auth0 provides name as a single field, or we fall back to email
+  // "Guest" is a final fallback (shouldn't happen on protected route)
   const userName = currentUser
     ? `${currentUser.get("firstName")} ${currentUser.get("lastName")}`
     : auth0User?.name || auth0User?.email || "Guest";
 
   /**
    * Handles logout for both authentication systems
-   * Auth0: Uses Auth0 logout with redirect
-   * Parse: Logs out Parse session and navigates to login
+   * 
+   * Different logout flows:
+   * - Auth0: Redirects to home page automatically (handled by Auth0)
+   * - Parse: Clears session locally, then navigate to login page manually
+   * 
+   * We check which system authenticated the user to call the correct logout method.
    */
   const handleLogout = async () => {
     if (isAuth0Authenticated) {
-      // Auth0 logout redirects user to home page
+      // Auth0 handles redirect via logoutParams
       auth0Logout({ logoutParams: { returnTo: window.location.origin } });
     } else {
-      // Parse logout - clear session and navigate to login
+      // Parse logout clears session, then navigate manually
       await logoutUser();
       navigate("/login");
     }
@@ -45,8 +53,9 @@ const MainGood = () => {
     <div className="p-6 max-w-2xl mx-auto main-container">
       {/* Tailwind: text-xl for larger heading, font-bold for weight, mb-4 for margin */}
       <h1 className="text-xl font-bold mb-4 text-white">User: {userName}</h1>
-      {/* Button styling matching login and sign up buttons - black and white */}
+      {/* Logout button uses CSS class for consistent styling with other buttons */}
       <button 
+        className="main-logout-button"
         onClick={handleLogout}
       >
         Logout

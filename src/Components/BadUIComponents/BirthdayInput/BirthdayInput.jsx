@@ -94,14 +94,6 @@ export const BirthdayGuesser = () => {
         overflow: 'auto',
     };
 
-    const titleStyle = {
-        fontSize: '32px',
-        fontWeight: 'bold',
-        color: '#000000',
-        marginBottom: '10px',
-        textAlign: 'center',
-    };
-
     const instructionStyle = {
         fontSize: '16px',
         color: '#666666',

@@ -7,6 +7,11 @@
 **Student B:** Mwayi Kashoko
 <br>
 
+
+
+
+&nbsp;<em>To view the project, visit:</em> <a href="https://feature6.netlify.app/">feature6.netlify.app</a>
+<br>
 <br>
 
 REFERENCES
@@ -23,10 +28,15 @@ REFERENCES
 - Student B used ChatGPT (with GPT-4o) for vibecoding and debugging
 
 
+<br>
+<br>
+<br>
+&nbsp; To deploy the project to Netlify (for Student A's reference)
 
 <br>
-<br>
-&nbsp;<em>To view the project, visit:</em> <a href="https://feature6.netlify.app/">feature6.netlify.app</a>
-<br>
-<br>
+
+```bash
+npm run netlify:deploy:prod
+```
+
 

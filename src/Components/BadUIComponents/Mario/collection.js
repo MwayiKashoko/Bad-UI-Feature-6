@@ -1,4 +1,4 @@
-import { pathname, game, shiftWidth, newWidth, graphics, width } from "./Mario";
+import { pathname, game, shiftWidth, graphics } from "./Mario";
 import { Background, Area, Level, Player } from "./Super_Mario_Bros_Functions";
 
 export function Game() {
@@ -191,12 +191,12 @@ Game.prototype = {
 					for (let i = 0; i < area[0].length; i++) {
 						for (let j = 0; j < area.length; j++) {
 
-							if (area[j][i].directionMoving == "pulley") {
+							if (area[j][i].directionMoving === "pulley") {
 
 								for (let k = i; k < area[0].length; k++) {
 									for (let l = j + 1; l < area.length; l++) {
 
-										if (area[l][k].directionMoving == "pulley" && area[l][k].pulleyPair == null && area[j][i].pulleyPair == null) {
+										if (area[l][k].directionMoving === "pulley" && area[l][k].pulleyPair === null && area[j][i].pulleyPair === null) {
 											area[j][i].pulleyPair = area[l][k];
 											area[l][k].pulleyPair = area[j][i];
 										}
@@ -236,8 +236,8 @@ Game.prototype = {
 		graphics.setTransform(1, 0, 0, 1, shiftWidth, 0);
 
 		//It basically checks for which blocks are edges so there are no unnesecary collisions that can cause clipping
-		if (this.levels != undefined) {
-			for (let [key, level] of Object.entries(this.levels)) {
+		if (this.levels !== undefined) {
+			for (let [, level] of Object.entries(this.levels)) {
 				level.areas.forEach((area) => {
 					area.area.forEach((row, j) => {
 						row.forEach((block, i, arr) => {
@@ -249,7 +249,7 @@ Game.prototype = {
 										let x = i + k;
 										let y = j + l;
 
-										if ((k == 0 && l == 0) || (x >= 0 && x < row.length && y >= 0 && y < area.area.length && !area.area[y][x].hasCollisions)) {
+										if ((k === 0 && l === 0) || (x >= 0 && x < row.length && y >= 0 && y < area.area.length && !area.area[y][x].hasCollisions)) {
 
 										} else {
 											isEdge = false;
@@ -278,31 +278,31 @@ Game.prototype = {
 		}
 
 		//Can you actually play the music again if stopped?
-		const canPlayMusic = this.music.src.indexOf(`${pathname}/sounds/Overworld.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/Bonus.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/Underground.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/invincible.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/Underwater.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/death.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/levelClear.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/castleClear.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/downFlagpole.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/hurryUp.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/gameOver.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/overworldToUnderground.wav`) == -1;
+		const canPlayMusic = this.music.src.indexOf(`${pathname}/sounds/Overworld.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/Bonus.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/Underground.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/invincible.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/Underwater.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/death.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/levelClear.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/castleClear.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/downFlagpole.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/hurryUp.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/gameOver.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/overworldToUnderground.wav`) === -1;
 
 		//Condition to determine whether we can speed up the music or not
-		const canSpeedUp = this.music.src.indexOf(`${pathname}/sounds/death.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/levelClear.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/downFlagpole.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/hurryUp.wav`) == -1 && this.music.src.indexOf(`${pathname}/sounds/gameOver.wav`) == -1 &&
-			this.music.src.indexOf(`${pathname}/sounds/levelClear.wav`) == -1;
+		const canSpeedUp = this.music.src.indexOf(`${pathname}/sounds/death.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/levelClear.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/downFlagpole.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/hurryUp.wav`) === -1 && this.music.src.indexOf(`${pathname}/sounds/gameOver.wav`) === -1 &&
+			this.music.src.indexOf(`${pathname}/sounds/levelClear.wav`) === -1;
 
-		if (canPlayMusic || this.music.currentTime == 0) {
+		if (canPlayMusic || this.music.currentTime === 0) {
 			this.music.play();
 		}
 
 		//This will stop the death and hurry up sounds from playing
-		if (this.music.currentTime == this.music.duration) {
+		if (this.music.currentTime === this.music.duration) {
 			if (this.music.src.indexOf(`${pathname}/sounds/death.wav`) > -1 || this.music.src.indexOf(`${pathname}/sounds/hurryUp.wav`) > -1) {
 				this.music.src = `${pathname}/sounds/${terrain}.wav`;
 			}
 		}
 
-		if (gameTime < 100 && canSpeedUp && !this.mario.clearedLevel && this.music.src.indexOf("hurryUp") == -1) {
+		if (gameTime < 100 && canSpeedUp && !this.mario.clearedLevel && this.music.src.indexOf("hurryUp") === -1) {
 			this.music.playbackRate = 1.5;
 		} else {
 			this.music.playBackRate = 1;

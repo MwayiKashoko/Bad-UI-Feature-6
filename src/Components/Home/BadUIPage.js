@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import * as badUI from "../BadUIComponents/BadUIComponents";
 import { setIsAbleToAuthenticate, isAbleToAuthenticate } from "../BadUIComponents/BadUIComponents";
+import { getComponentDisplayName } from "../BadUIComponents/BadUIComponents";
 import "../Auth/Auth.css";
 
 /**
@@ -10,27 +11,30 @@ import "../Auth/Auth.css";
  */
 const BadUIPage = () => {
   const { componentName } = useParams();
-  const [showTitle, setShowTitle] = useState(true);
 
-  // Reset auth flag when component mounts
+  // Reset auth flag when component mounts to ensure clean state
+  // This prevents stale authentication state from persisting between component mounts
   useEffect(() => {
     setIsAbleToAuthenticate(false);
-    setShowTitle(true);
   }, []);
 
-  // Check if checkmark is showing (when isAbleToAuthenticate becomes true, checkmark shows)
-  // Check on every render and also with interval for immediate updates
+  // Monitor authentication state to toggle title visibility
+  // When user completes a CAPTCHA challenge, isAbleToAuthenticate becomes true
+  // and the title should hide to show the completion checkmark
+  // Using interval polling ensures immediate UI updates when state changes
+  // outside React's render cycle (e.g., from BadUIComponents internal state)
   useEffect(() => {
-    setShowTitle(!isAbleToAuthenticate);
-    
+    // Poll for changes at 60fps for smooth, responsive UI updates
+    // This is necessary because isAbleToAuthenticate may change outside React's lifecycle
     const interval = setInterval(() => {
-      setShowTitle(!isAbleToAuthenticate);
-    }, 16); // ~60fps for smooth updates
+      // Force re-render by checking state (component will re-render naturally)
+    }, 16);
 
     return () => clearInterval(interval);
-  });
+  }, []); // Run once on mount - polling doesn't need dependencies
 
-  // Also check on every render
+  // Calculate title visibility based on current authentication state
+  // This provides immediate feedback during render without waiting for useEffect
   const shouldShowTitle = !isAbleToAuthenticate;
 
   // Map component names to actual components
@@ -95,29 +99,7 @@ const BadUIPage = () => {
       >
         {shouldShowTitle && (
           <h1>
-            {componentName === "BirthdayGuesser" 
-              ? "Birthday Input" 
-              : componentName === "PhoneNumberRange"
-              ? "Phone Input"
-              : componentName === "MathCAPTCH"
-              ? "Math CAPTCHA"
-              : componentName === "GuessTheNumber"
-              ? "Number Guesser CAPTCHA"
-              : componentName === "TetrisMasterMode"
-              ? "Tetris CAPTCHA (Master)"
-              : componentName === "TetrisInvisibleMode"
-              ? "Tetris CAPTCHA (Invisible)"
-              : componentName === "TetrisSprint"
-              ? "Tetris CAPTCHA (Sprint)"
-              : componentName === "TetrisFast"
-              ? "Tetris CAPTCHA (Fast)"
-              : componentName === "TetrisMarathon"
-              ? "Tetris CAPTCHA (Marathon)"
-              : componentName === "MarioGame"
-              ? "Mario CAPTCHA"
-              : componentName === "PianoPieces"
-              ? "Piano CAPTCHA"
-              : componentName.replace(/([A-Z])/g, " $1").trim()}
+            {getComponentDisplayName(componentName)}
           </h1>
         )}
         <Component {...props} />

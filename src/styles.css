@@ -14,14 +14,14 @@
   font-family: "Zen Maru Gothic", sans-serif;
 }
 
-/* Default selection: black background with white text */
+/* Default selection: yellow background with black text */
 ::selection {
-  background-color: var(--black);
+  background-color: var(--primary-blue);
   color: var(--white);
 }
 
 ::-moz-selection {
-  background-color: var(--black);
+  background-color: var(--primary-blue);
   color: var(--white);
 }
 
