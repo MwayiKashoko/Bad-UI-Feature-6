@@ -13,6 +13,7 @@ import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.js";
 import PublicRoute from "./PublicRoute/PublicRoute.js";
 import Main from "./Main/MainGood.js";
 import Home from "./Home/Home.js";
+import BadUIPage from "./BadUI/BadUIPage.js";
 import { isAuthenticated } from "./Auth/AuthService.js";
 
 /**
@@ -59,6 +60,12 @@ const AuthRoutes = () => {
       <Route
         path="/user"
         element={<ProtectedRoute element={Main} isAuthed={authorized} />}
+      />
+      
+      {/* Bad UI pages - now protected, requires authentication */}
+      <Route 
+        path="/gallery/:componentName" 
+        element={<ProtectedRoute element={BadUIPage} isAuthed={authorized} />} 
       />
       
       {/* Catch-all route - redirect unknown paths to home */}

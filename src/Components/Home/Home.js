@@ -4,9 +4,6 @@ import { isAuthenticated, logoutUser } from "../Auth/AuthService.js";
 import { useAuth0 } from "@auth0/auth0-react";
 import Parse from "parse";
 import Cloud from "./Cloud";
-import PhoneNumber from "../BadUI/PhoneNumber";
-import Birthday from "../BadUI/Birthday";
-import Tetris from "../BadUI/Tetris";
 import "./Home.css";
 
 /**
@@ -16,7 +13,7 @@ import "./Home.css";
  */
 const Home = () => {
   const navigate = useNavigate();
-  const { isAuthenticated: isAuth0Authenticated, logout: auth0Logout, user: auth0User } = useAuth0();
+  const { isAuthenticated: isAuth0Authenticated, logout: auth0Logout, user: auth0User, appState } = useAuth0();
   
   // Check authentication status from both systems
   const isLoggedIn = isAuthenticated() || isAuth0Authenticated;
@@ -31,12 +28,19 @@ const Home = () => {
     ? currentUser.get("firstName") 
     : (auth0User?.given_name || auth0User?.name?.split(' ')[0] || null);
 
+  // Handle Auth0 callback redirect - check if user just logged in via Auth0 and has a return path
+  useEffect(() => {
+    if (isAuth0Authenticated) {
+      const redirectPath = appState?.returnTo || sessionStorage.getItem("authRedirectPath");
+      if (redirectPath) {
+        sessionStorage.removeItem("authRedirectPath");
+        navigate(redirectPath);
+      }
+    }
+  }, [isAuth0Authenticated, appState, navigate]);
+
   // Generate random cloud configurations
   const [clouds, setClouds] = useState([]);
-  
-  // State for modal/square visibility
-  const [showSquare, setShowSquare] = useState(false);
-  const [selectedBoxIndex, setSelectedBoxIndex] = useState(null);
 
   useEffect(() => {
     // Generate clouds in distinct channels spaced 500px apart
@@ -82,20 +86,6 @@ const Home = () => {
     generateClouds();
   }, []);
 
-  // Prevent body scrolling when modal is open
-  useEffect(() => {
-    if (showSquare) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    
-    // Cleanup: restore scrolling when component unmounts
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [showSquare]);
-
   /**
    * Handles logout for both authentication systems
    * Auth0: Uses Auth0 logout with redirect to home
@@ -110,22 +100,20 @@ const Home = () => {
     }
   };
 
-  /**
-   * Handles grid box click - opens the white square modal
-   * First box (index 0) shows PhoneNumber component
-   */
-  const handleGridBoxClick = (index) => {
-    setSelectedBoxIndex(index);
-    setShowSquare(true);
-  };
+  // Array of bad UI components to display in the grid
+  const badUIComponents = [
+    "PhoneNumberRange",
+    "BirthdayGuesser",
+    "MathCAPTCH",
+    "GuessTheNumber",
+    "TetrisMasterMode",
+    "TetrisInvisibleMode",
+    "TetrisSprint",
+    "MarioGame",
+    "PianoPieces",
+    "TetrisMarathon"
+  ];
 
-  /**
-   * Handles closing the square modal
-   */
-  const handleCloseSquare = () => {
-    setShowSquare(false);
-    setSelectedBoxIndex(null);
-  };
 
   return (
     <>
@@ -144,10 +132,12 @@ const Home = () => {
       {/* Using Tailwind CSS for responsive padding and text centering */}
       <div className="home-welcome-container p-8 text-center">
         {!isLoggedIn ? (
-          <h1 className="home-welcome-text font-bold mb-6">Welcome to the home of Bad UI</h1>
+          <h1 className="home-welcome-text font-bold mb-6">
+            Welcome to the home of Bad UI
+          </h1>
         ) : (
           <h1 className="home-welcome-text font-bold mb-6">
-            {firstName}, let's build some bad UI
+            {firstName}, let's build some Bad UI
           </h1>
         )}
       </div>
@@ -179,47 +169,59 @@ const Home = () => {
       )}
       {/* Tailwind: grid layout with responsive columns and gap spacing */}
       <div className="home-grid-container grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 p-4">
-        {Array.from({ length: 12 }).map((_, index) => (
-          <div 
-            key={index} 
-            className="home-grid-box"
-            onClick={() => handleGridBoxClick(index)}
-            style={{ cursor: 'pointer' }}
-          >
-            {index === 0 && (
-              <div className="grid-box-label">Phone Number</div>
-            )}
-            {index === 1 && (
-              <div className="grid-box-label">Birthday</div>
-            )}
-            {index === 2 && (
-              <div className="grid-box-label">Tetris CAPTCHA</div>
-            )}
-          </div>
-        ))}
-      </div>
-      
-      {/* Modal overlay and white square */}
-      {showSquare && (
-        <div className="square-modal-overlay" onClick={handleCloseSquare}>
-          <div className="square-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button 
-              className="modal-close-button"
-              onClick={handleCloseSquare}
-              aria-label="Close"
+        {badUIComponents.map((componentName, index) => {
+          const handleGridBoxClick = (e) => {
+            // If not logged in, redirect to login with the intended destination
+            if (!isLoggedIn) {
+              e.preventDefault();
+              navigate(`/login?redirect=${encodeURIComponent(`/gallery/${componentName}`)}`);
+            }
+          };
+
+          return (
+            <Link
+              key={index}
+              to={`/gallery/${componentName}`}
+              onClick={handleGridBoxClick}
+              className="home-grid-box"
+              style={{ 
+                cursor: "pointer", 
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center"
+              }}
             >
-              ×
-            </button>
-            {selectedBoxIndex === 0 ? (
-              <PhoneNumber onClose={handleCloseSquare} />
-            ) : selectedBoxIndex === 1 ? (
-              <Birthday onClose={handleCloseSquare} />
-            ) : selectedBoxIndex === 2 ? (
-              <Tetris onClose={handleCloseSquare} />
-            ) : null}
-          </div>
-        </div>
-      )}
+            <div style={{ padding: "20px" }}>
+              {componentName === "BirthdayGuesser" 
+                ? "Birthday Input" 
+                : componentName === "PhoneNumberRange"
+                ? "Phone Input"
+                : componentName === "MathCAPTCH"
+                ? "Math CAPTCHA"
+                : componentName === "GuessTheNumber"
+                ? "Number Guesser CAPTCHA"
+                : componentName === "TetrisMasterMode"
+                ? "Tetris CAPTCHA (Master)"
+                : componentName === "TetrisInvisibleMode"
+                ? "Tetris CAPTCHA (Invisible)"
+                : componentName === "TetrisSprint"
+                ? "Tetris CAPTCHA (Sprint)"
+                : componentName === "TetrisFast"
+                ? "Tetris CAPTCHA (Fast)"
+                : componentName === "TetrisMarathon"
+                ? "Tetris CAPTCHA (Marathon)"
+                : componentName === "MarioGame"
+                ? "Mario CAPTCHA"
+                : componentName === "PianoPieces"
+                ? "Piano CAPTCHA"
+                : componentName.replace(/([A-Z])/g, " $1").trim()}
+            </div>
+          </Link>
+          );
+        })}
+      </div>
     </>
   );
 };
