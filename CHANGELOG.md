@@ -1,5 +1,15 @@
 # Change Log
 
+## [0.4.0] - 2025-12-8
+
+### Added (Student A)
+- Added Google login/signup functionality
+- Added Playful UI styling with Tailwind CSS components
+- Deployed project to web hosting platform Netlify
+
+### Added (Student B)
+- 
+
 ## [0.3.0] - 2025-11-7
 
 ### Added (Student A)
