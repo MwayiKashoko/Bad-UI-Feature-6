@@ -989,11 +989,11 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                 canAuthenticate = true;
             }
         } else if (state === "Master") {
-            if (linesCleared < 500) {
-                linesCleared = 500;
+            if (linesCleared < 400) {
+                linesCleared = 400;
             }
 
-            if (linesCleared >= 520) {
+            if (linesCleared >= 420) {
                 state = "Game Completed";
                 canAuthenticate = true;
             }
