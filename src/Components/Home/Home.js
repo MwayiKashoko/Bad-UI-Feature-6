@@ -143,11 +143,11 @@ const Home = () => {
     "MathCAPTCH",
     "GuessTheNumber",
     "TetrisMarathon",
+    "MarioGame",
+    "PianoPieces",
     "TetrisInvisibleMode",
     "TetrisMasterMode",
-    "TetrisSprint",
-    "MarioGame",
-    "PianoPieces"
+    "TetrisSprint"
   ];
 
 

@@ -150,13 +150,14 @@ export const SimpleMathQuestion = ({ user }) => {
 
             formula = `\\[\\sum_{n = ${num1}}^{${num2}}${num3}n^{${num4}}\\]`;
 
-            let actualAnswer = 0;
+            // Calculate answer for verification (used in checkIfMathRight)
+            let _actualAnswer = 0;
 
             for (let i = num1; i <= num2; i++) {
-                actualAnswer += num3 * i ** num4;
+                _actualAnswer += num3 * i ** num4;
             }
 
-            //console.log(actualAnswer);
+            //console.log(_actualAnswer);
 
             break;
         case 4:

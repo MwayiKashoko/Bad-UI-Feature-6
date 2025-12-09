@@ -53,7 +53,6 @@ export const gameEngine = (canvas) => {
     let level = `${world}-${stage}`;
     let debris = [];
     let fireworks = [];
-    let shift = 0;
     let quit = false;
 
     let currentGame = new Game();
@@ -64,16 +63,16 @@ export const gameEngine = (canvas) => {
     let levels = currentGame.levels;
     let currentLocation = levels[level].areas[0];
     let mario = currentGame.mario;
-    let randomized = false;
-    let codeUsed = false;
+    let _randomized = false;
+    let _codeUsed = false;
 
-    let memory;
-    let code;
+    let _memory;
+    let _code;
 
-    let a = 0;
-    let b = 0;
+    let _a = 0;
+    let _b = 0;
 
-    let currentBackground = "Overworld";
+    let _currentBackground = "Overworld";
 
     const blockObject = {
         " ": "Air",
@@ -240,18 +239,18 @@ export const gameEngine = (canvas) => {
         } else if (["m", "§", "¶", "œ", "¥"].includes(lastIndex.letter)) {
             lastIndex.width = 80;
             lastIndex.height = 20;
-        } else if (lastIndex.letter == "<") {
+        } else if (lastIndex.letter === "<") {
             lastIndex.width = 520;
         } else if (["!", "~"].includes(lastIndex.letter)) {
             lastIndex.height = 60;
-        } else if (lastIndex.letter == "y") {
+        } else if (lastIndex.letter === "y") {
             lastIndex.height = 80;
-        } else if (lastIndex.letter == "f") {
+        } else if (lastIndex.letter === "f") {
             lastIndex.height = 420;
-        } else if (lastIndex.letter == ".") {
+        } else if (lastIndex.letter === ".") {
             lastIndex.width = 200;
             lastIndex.height = 200;
-        } else if (lastIndex.letter == ",") {
+        } else if (lastIndex.letter === ",") {
             lastIndex.width = 360;
             lastIndex.height = 440;
         }
@@ -286,7 +285,7 @@ export const gameEngine = (canvas) => {
     }
 
     blocksImages.sort((a, b) => {
-        if (a.width == b.width) {
+        if (a.width === b.width) {
             return a.height - b.height;
         }
 
@@ -298,7 +297,7 @@ export const gameEngine = (canvas) => {
     let blocksImagesPagesInt = 0;
 
     while (blocksImages.length) {
-        if (blocksImagesPagesInt % 6 == 0) {
+        if (blocksImagesPagesInt % 6 === 0) {
             tempBlockArr.push([]);
         }
 
@@ -371,8 +370,6 @@ export const gameEngine = (canvas) => {
     }
 
     enemyImages = tempEnemyArr;
-
-    let levelOffset = 0;
 
     //Logic for determining what happens when a key is pressed
     /*document.addEventListener("keydown", (key) => {
@@ -536,7 +533,7 @@ export const gameEngine = (canvas) => {
             return;
         }
 
-        if (game == "smb" || game == "smbtll") {
+        if (game === "smb" || game === "smbtll") {
             if (music.src.indexOf(`${pathname}/sounds/BowsersCastle.wav`) > -1 && music.currentTime / music.duration > 0.985) {
                 music.currentTime = 0;
                 music.play();
@@ -689,7 +686,7 @@ export const gameEngine = (canvas) => {
     }
 
     const reset = () => {
-        randomized = false;
+        _randomized = false;
         state = "loading";
         timeUntilPlay = 150;
 
@@ -763,8 +760,6 @@ export const gameEngine = (canvas) => {
         timeUntilNextFireball = 0;
         fireballsThrown = 0;
 
-        const startingY = mario.startingY;
-
         mario = new Player(mario.lives, gravity, music, sounds, mario.coins);
 
         mario.isBig ? mario.drawnY = 440 : mario.drawnY = 480;
@@ -779,7 +774,7 @@ export const gameEngine = (canvas) => {
     }
 
     const nextLevel = () => {
-        randomized = false;
+        _randomized = false;
 
         if (world === 1) {
             world = 8;
@@ -840,7 +835,7 @@ export const gameEngine = (canvas) => {
     }
 
     const changeLocation = () => {
-        randomized = false;
+        _randomized = false;
         powerups = [];
         fireballs = [];
         flames = [];
@@ -1907,8 +1902,6 @@ export const gameEngine = (canvas) => {
 
             mario.canStand = true;
 
-            let a = [];
-
             for (let row of currentLocation.area) {
                 let canStand = true;
 
@@ -1942,7 +1935,7 @@ export const gameEngine = (canvas) => {
                 mario.addScore(50, -100, -100);
                 gameTime--;
             } else if (mario.behindCastle && gameTime <= 0) {
-                if (mario.transition != "cleared castle") {
+                if (mario.transition !== "cleared castle") {
                     setFireworks();
                 } else {
                     canGoToNextLevel = true;

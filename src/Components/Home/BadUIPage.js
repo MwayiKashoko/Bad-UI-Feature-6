@@ -94,6 +94,10 @@ const BadUIPage = () => {
             ? { width: 'auto', paddingLeft: '30px', paddingRight: '30px' }
             : componentName === "MathCAPTCH"
             ? { width: '500px', paddingLeft: '30px', paddingRight: '30px' }
+            : componentName === "MarioGame"
+            ? { width: 'auto', marginTop: '20px', marginLeft: '20px', marginRight: '20px', paddingLeft: '30px', paddingRight: '30px' }
+            : componentName === "PianoPieces"
+            ? { width: 'auto', marginTop: '100px', marginLeft: '20px', marginRight: '20px', paddingLeft: '30px', paddingRight: '30px' }
             : {}
         }
       >

@@ -471,20 +471,22 @@ export const MarioGame = React.memo(function MarioGame({ user, ui }) {
     const [authFlag, setAuthFlag] = useState(isAbleToAuthenticate);
     const [text, setText] = useState("");
     const [showCanvas, setShowCanvas] = useState(true);
+    const [gameStarted, setGameStarted] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     // 1. PRELOAD ASSETS ONCE
     useEffect(() => {
         preloadAssets();
     }, []);
 
-    // 2. RUN GAME LOOP ONCE
+    // 2. RUN GAME LOOP ONCE - only when gameStarted is true
     useEffect(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas || !gameStarted) return;
 
         // start the game
         marioCode(canvas);
-    }, []);
+    }, [gameStarted]);
 
     // 3. AUTH CHECK – but DO NOT set state 10 times per second
     useEffect(() => {
@@ -510,13 +512,14 @@ export const MarioGame = React.memo(function MarioGame({ user, ui }) {
 
     // 5. INITIAL TEXT
     useEffect(() => {
-        setText("Could not verify that you're a human. Finish level 1-1, and 8-3 and D-1.");
+        setText("Could not verify that you're a human. Finish world levels 1-1, 8-3, and D-1 to prove you're not a robot.");
     }, []);
 
     const handleReset = () => {
         setCompleted(false);
         setAuthFlag(false);
         setShowCanvas(true);
+        setGameStarted(false);
         setIsAbleToAuthenticate(false);
     };
 
@@ -529,15 +532,46 @@ export const MarioGame = React.memo(function MarioGame({ user, ui }) {
             <h2>{text}</h2>
 
             {showCanvas && (
-                <>
-                    <canvas
-                        ref={canvasRef}
-                        width={800}
-                        height={600}
-                        style={{ backgroundColor: "black" }}
-                    />
-                    <button onClick={() => alert('Controls: ...')}>Help</button>
-                </>
+                <div style={{ marginTop: "20px" }}>
+                    <div style={{ position: "relative", display: "inline-block" }}>
+                        <canvas
+                            ref={canvasRef}
+                            width={800}
+                            height={600}
+                            style={{ backgroundColor: "black" }}
+                        />
+                        {!gameStarted && (
+                            <button
+                                onClick={() => setGameStarted(true)}
+                                onMouseEnter={() => setIsHovered(true)}
+                                onMouseLeave={() => setIsHovered(false)}
+                                style={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    transform: "translate(-50%, -50%)",
+                                    padding: "12px 24px",
+                                    fontSize: "18px",
+                                    fontWeight: "700",
+                                    cursor: "pointer",
+                                    border: "3px solid white",
+                                    borderRadius: "10px",
+                                    backgroundColor: isHovered ? "black" : "white",
+                                    color: isHovered ? "white" : "black",
+                                    transition: "all 0.3s ease",
+                                    zIndex: 10
+                                }}
+                            >
+                                Start Game
+                            </button>
+                        )}
+                    </div>
+                    {gameStarted && (
+                        <div style={{ marginTop: "10px", textAlign: "center" }}>
+                            <button onClick={() => alert('Use left, right, and up arrow keys to move character.')}>Help</button>
+                        </div>
+                    )}
+                </div>
             )}
         </>
     );
