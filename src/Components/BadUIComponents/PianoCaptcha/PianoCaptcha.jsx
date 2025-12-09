@@ -292,12 +292,14 @@ export const PianoPieces = () => {
     const [startedPlaying, setStartedPlaying] = useState(false);
     const [keysPressed, setKeysPressed] = useState([]);
     const [completedCaptcha, setCompletedCaptcha] = useState(false);
+    const [isSongPlaying, setIsSongPlaying] = useState(false);
 
     const handleReset = () => {
         setCompletedCaptcha(false);
         setCurrentPieceIndex(random(0, pieces.length - 1));
         setKeysPressed([]);
         setStartedPlaying(false);
+        setIsSongPlaying(false);
         setIsAbleToAuthenticate(false);
     };
 
@@ -1083,6 +1085,7 @@ export const PianoPieces = () => {
 
         const handle = (e) => {
             if (held.has(e.code)) return; // ignore if key is still held
+            if (isSongPlaying) return; // don't allow key presses while song is playing
             held.add(e.code);
 
             let sound = null;
@@ -1158,7 +1161,7 @@ export const PianoPieces = () => {
             window.removeEventListener("keydown", handle);
             window.removeEventListener("keyup", handleUp);
         };
-    }, [blackKeyLetters, blackKeys, whiteKeyLetters, whiteKeys, startedPlaying, keysPressed, pieces, currentPieceIndex]);
+    }, [blackKeyLetters, blackKeys, whiteKeyLetters, whiteKeys, startedPlaying, keysPressed, pieces, currentPieceIndex, isSongPlaying]);
 
     preloadSounds();
     let audioCtx;
@@ -1170,6 +1173,10 @@ export const PianoPieces = () => {
     }
 
     const playSong = async () => {
+        // Don't allow starting a new song if one is already playing
+        if (isSongPlaying) return;
+        
+        setIsSongPlaying(true);
         unlockAudio(); // must be inside same click
 
         //0-30
@@ -1184,14 +1191,17 @@ export const PianoPieces = () => {
             audio.play().catch(err => console.log(audio.src, err));
             await new Promise(res => setTimeout(res, pieces[piece].tempo));
         }
+        
+        // Song finished playing
+        setIsSongPlaying(false);
     }
 
     return (
-        <div style={{ backgroundColor: '#4A90E2', minHeight: '100vh', padding: '20px' }}>
+        <div style={{ backgroundColor: 'var(--primary-blue)', minHeight: '100vh', padding: '20px', borderRadius: '10px' }}>
             {!completedCaptcha && (
                 <>
                     <h2 style={{ color: 'white', textAlign: 'center', marginBottom: '20px' }}>
-                        Cannot verify if user is human. Please play {pieces[currentPieceIndex].name} on the piano below to prove you are not a robot. (Click on key with mouse to get help on what piece sounds like)
+                        Cannot verify if user is human.<br />Please play {pieces[currentPieceIndex].name} on the piano below to prove you are not a robot.<br />(Click on key with mouse to get help on what piece sounds like)
                     </h2>
 
                     <div style={containerStyle}>
