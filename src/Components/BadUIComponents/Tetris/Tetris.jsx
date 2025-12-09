@@ -962,7 +962,7 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
 
         let canAuthenticate = false;
 
-        if (state === "Marathon" && linesCleared >= 2) {
+        if (state === "Marathon" && linesCleared >= 200) {
             transition = true;
             state = "Game Complete";
             canAuthenticate = true;
@@ -976,7 +976,7 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
                 resetBoard();
             }
 
-            if (linesCleared >= 2) {
+            if (linesCleared >= 20) {
                 transition = true;
                 state = "Game Complete";
                 canAuthenticate = true;
@@ -984,19 +984,23 @@ export const tetrisCode = (canvas, typeOfGameMode) => {
         } else if (state === "Invisible") {
             invisible = true;
 
-            if (linesCleared >= 2) {
+            if (linesCleared >= 10) {
                 state = "Game Completed";
                 canAuthenticate = true;
             }
         } else if (state === "Master") {
-            if (linesCleared >= 2) {
+            if (linesCleared < 500) {
+                linesCleared = 500;
+            }
+
+            if (linesCleared >= 520) {
                 state = "Game Completed";
                 canAuthenticate = true;
             }
         } else if (state === "Fast") {
             blockSpeed += 0.005;
 
-            if (linesCleared >= 2) {
+            if (linesCleared >= 20) {
                 state = "Game Completed";
                 canAuthenticate = true;
             }

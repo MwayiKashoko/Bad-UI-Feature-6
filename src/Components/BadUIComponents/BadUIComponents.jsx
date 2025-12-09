@@ -96,15 +96,15 @@ const CompletionCheckmark = ({ onReset }) => {
             padding: '40px 20px',
             backgroundColor: '#ffffff',
         }}>
-            <svg 
-                width="120" 
-                height="120" 
-                viewBox="0 0 24 24" 
-                fill="none" 
+            <svg
+                width="120"
+                height="120"
+                viewBox="0 0 24 24"
+                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                <path 
-                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" 
+                <path
+                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
                     fill="#000000"
                     stroke="#000000"
                     strokeWidth="2"
@@ -134,25 +134,25 @@ export const random = (min, max) => {
  * @returns {string} - User-friendly display name (e.g., "Birthday Input")
  */
 export const getComponentDisplayName = (componentName) => {
-  // Map internal component names to user-friendly display names
-  // These names appear in the UI and should be clear and descriptive
-  const nameMap = {
-    "BirthdayGuesser": "Birthday Input",
-    "PhoneNumberRange": "Phone Input",
-    "MathCAPTCH": "Math CAPTCHA",
-    "GuessTheNumber": "Number Guesser CAPTCHA",
-    "TetrisMasterMode": "Tetris CAPTCHA (Master)",
-    "TetrisInvisibleMode": "Tetris CAPTCHA (Invisible)",
-    "TetrisSprint": "Tetris CAPTCHA (Sprint)",
-    "TetrisFast": "Tetris CAPTCHA (Fast)",
-    "TetrisMarathon": "Tetris CAPTCHA (Marathon)",
-    "MarioGame": "Mario CAPTCHA",
-    "PianoPieces": "Piano CAPTCHA",
-  };
+    // Map internal component names to user-friendly display names
+    // These names appear in the UI and should be clear and descriptive
+    const nameMap = {
+        "BirthdayGuesser": "Birthday Input",
+        "PhoneNumberRange": "Phone Input",
+        "MathCAPTCH": "Math CAPTCHA",
+        "GuessTheNumber": "Number Guesser CAPTCHA",
+        "TetrisMasterMode": "Tetris CAPTCHA (Master)",
+        "TetrisInvisibleMode": "Tetris CAPTCHA (Invisible)",
+        "TetrisSprint": "Tetris CAPTCHA (Sprint)",
+        "TetrisFast": "Tetris CAPTCHA (Fast)",
+        "TetrisMarathon": "Tetris CAPTCHA (Marathon)",
+        "MarioGame": "Mario CAPTCHA",
+        "PianoPieces": "Piano CAPTCHA",
+    };
 
-  // Return mapped name if exists, otherwise convert camelCase to Title Case
-  // This fallback handles any new components that haven't been explicitly mapped
-  return nameMap[componentName] || componentName.replace(/([A-Z])/g, " $1").trim();
+    // Return mapped name if exists, otherwise convert camelCase to Title Case
+    // This fallback handles any new components that haven't been explicitly mapped
+    return nameMap[componentName] || componentName.replace(/([A-Z])/g, " $1").trim();
 };
 
 // nCk
@@ -229,7 +229,7 @@ export const ImpossiblePassword = ({ user }) => {
         if (!/Liszt/.test(user.password)) return;
         if (!/J1407b/.test(user.password)) return;
         if (!/Baltimore/.test(user.password)) return;
-        
+
         // All checks passed
         setCompleted(true);
         setIsAbleToAuthenticate(true);
@@ -378,13 +378,13 @@ export const TetrisGame = ({ user, ui }) => {
     return (<>
         <h2>{(() => {
             if (ui.uiFeature === "TetrisMasterMode" || ui.uiFeature === "TetrisMarathon") {
-                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />Clear 2 horizontal rows of blocks to win.</>;
+                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />Clear {ui.uiFeature === "TetrisMasterMode" ? 20 : 200} horizontal rows of blocks to win.</>;
             } else if (ui.uiFeature === "TetrisInvisibleMode") {
-                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />Placed blocks will be invisible, so remember where you placed them.<br />Clear 2 horizontal rows of blocks to win.</>;
+                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />Placed blocks will be invisible, so remember where you placed them.<br />Clear 10 horizontal rows of blocks to win.</>;
             } else if (ui.uiFeature === "TetrisSprint") {
-                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />You have 30 seconds to complete the challenge.<br />Clear 2 horizontal rows of blocks to win.</>;
+                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />You have 30 seconds to complete the challenge.<br />Clear 20 horizontal rows of blocks to win.</>;
             } else if (ui.uiFeature === "TetrisFast") {
-                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />The game speed will continuously increase.<br />Clear 2 horizontal rows of blocks to win.</>;
+                return <>Could not verify that you're a human.<br />Please beat the level to verify you're not a robot.<br />The game speed will continuously increase.<br />Clear 20 horizontal rows of blocks to win.</>;
             }
             return text;
         })()}</h2>
@@ -393,21 +393,21 @@ export const TetrisGame = ({ user, ui }) => {
                 <div style={{ position: "relative", display: "inline-block" }}>
                     <canvas ref={canvasRef} width={600} height={600} style={{ backgroundColor: "black" }}></canvas>
                     {!gameStarted && (
-                        <button 
-                            onClick={() => setGameStarted(true)} 
+                        <button
+                            onClick={() => setGameStarted(true)}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
-                            style={{ 
+                            style={{
                                 position: "absolute",
                                 top: "50%",
                                 left: "50%",
                                 transform: "translate(-50%, -50%)",
-                                padding: "12px 24px", 
-                                fontSize: "18px", 
-                                fontWeight: "700", 
-                                cursor: "pointer", 
-                                border: "3px solid white", 
-                                borderRadius: "10px", 
+                                padding: "12px 24px",
+                                fontSize: "18px",
+                                fontWeight: "700",
+                                cursor: "pointer",
+                                border: "3px solid white",
+                                borderRadius: "10px",
                                 backgroundColor: isHovered ? "black" : "white",
                                 color: isHovered ? "white" : "black",
                                 transition: "all 0.3s ease",

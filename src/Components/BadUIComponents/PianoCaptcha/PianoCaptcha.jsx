@@ -28,15 +28,15 @@ const CompletionCheckmark = ({ onReset }) => {
             padding: '40px 20px',
             backgroundColor: '#ffffff',
         }}>
-            <svg 
-                width="120" 
-                height="120" 
-                viewBox="0 0 24 24" 
-                fill="none" 
+            <svg
+                width="120"
+                height="120"
+                viewBox="0 0 24 24"
+                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                <path 
-                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" 
+                <path
+                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
                     fill="#000000"
                     stroke="#000000"
                     strokeWidth="2"
@@ -155,37 +155,11 @@ const MusicStaff = ({ notes }) => {
                                     𝄞
                                 </text>
 
-                                {/* Key signature - two flats (B-flat and E-flat) - only on first measure */}
-                                {measureIndex === 0 && (
-                                    <g>
-                                        {/* B-flat on middle line (B line) */}
-                                        <text
-                                            x={startX + 10}
-                                            y={measureY + 30}
-                                            fontSize="24"
-                                            fontFamily="serif"
-                                            fill="black"
-                                        >
-                                            ♭
-                                        </text>
-                                        {/* E-flat on second line from top (E line) */}
-                                        <text
-                                            x={startX + 10}
-                                            y={measureY + 15}
-                                            fontSize="24"
-                                            fontFamily="serif"
-                                            fill="black"
-                                        >
-                                            ♭
-                                        </text>
-                                    </g>
-                                )}
-
                                 {/* Time signature (4/4) - only on first measure */}
                                 {measureIndex === 0 && (
                                     <g>
-                                        <text x={startX + 40} y={measureY + 15} fontSize="24" fontFamily="serif">4</text>
-                                        <text x={startX + 40} y={measureY + 45} fontSize="24" fontFamily="serif">4</text>
+                                        <text x={startX - 15} y={measureY + 15} fontSize="24" fontFamily="serif">4</text>
+                                        <text x={startX - 15} y={measureY + 45} fontSize="24" fontFamily="serif">4</text>
                                     </g>
                                 )}
 
@@ -406,6 +380,7 @@ export const PianoPieces = () => {
         borderRadius: '0 0 8px 8px',
         cursor: 'pointer',
         transition: 'all 0.1s',
+        color: "black",
         boxShadow: isActive ? 'inset 0 2px 4px rgba(0,0,0,0.2)' : '0 4px 6px rgba(0,0,0,0.3)',
     });
 
@@ -420,7 +395,7 @@ export const PianoPieces = () => {
 
     const blackKeyStyle = (isActive, position) => ({
         position: 'absolute',
-        left: `${position * 64 - 24}px`,
+        left: `${position * 64}px`,
         width: '48px',
         height: '160px',
         backgroundColor: isActive ? '#4b5563' : '#000000',
@@ -1232,6 +1207,7 @@ export const PianoPieces = () => {
                                         style={whiteKeyStyle(activeKey === key.id)}
                                         onClick={playSong}
                                     >
+                                        <span style={noteLabelStyle(false)}>{key.key}</span>
                                     </button>
                                 ))}
                             </div>

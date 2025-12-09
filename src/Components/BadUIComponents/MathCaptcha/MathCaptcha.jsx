@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { setIsAbleToAuthenticate, isAbleToAuthenticate } from "../BadUIComponents";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
 import "../../Auth/Auth.css";
 
 // Utility functions
@@ -72,15 +73,15 @@ const CompletionCheckmark = ({ onReset }) => {
             padding: '40px 20px',
             backgroundColor: '#ffffff',
         }}>
-            <svg 
-                width="120" 
-                height="120" 
-                viewBox="0 0 24 24" 
-                fill="none" 
+            <svg
+                width="120"
+                height="120"
+                viewBox="0 0 24 24"
+                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                <path 
-                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" 
+                <path
+                    d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"
                     fill="#000000"
                     stroke="#000000"
                     strokeWidth="2"
@@ -93,6 +94,21 @@ const CompletionCheckmark = ({ onReset }) => {
 };
 
 export const SimpleMathQuestion = ({ user }) => {
+    /*const config = {
+        packages: { "[+]": ["html"] },
+        loader: { load: ["input/tex", "output/chtml"] },
+        tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] }
+    };*/
+
+    const config = {
+        packages: { "[+]": ["html"] },
+        loader: { load: ["input/tex", "output/chtml"] },
+        tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
+        chtml: {
+            linebreaks: { automatic: false }  // Add this
+        }
+    };
+
     const math = require("mathjs");
     let num1 = 1;
     let num2 = 1;
@@ -116,14 +132,14 @@ export const SimpleMathQuestion = ({ user }) => {
         case 1:
             num1 = random(10000, 1000000) * 2;
             num2 = random(10000, 1000000) * 2;
-            formula = `gcd(${num1}, ${num2}) = ?`;
+            formula = `\\[gcd(${num1}, ${num2}) = ?\\]`;
             //console.log(math.gcd(num1, num2));
             break;
         case 2:
             num1 = random(5, 10);
             num2 = random(5, 10);
             num3 = random(5, 10);
-            formula = `Expand (${num1}x+${num2}y)^${num3}`;
+            formula = `Expand \\[(${num1}x+${num2}y)^${num3} \\]`;
             //console.log(expandBinomial(num1, num2, num3));
             break;
         case 3:
@@ -132,7 +148,15 @@ export const SimpleMathQuestion = ({ user }) => {
             num3 = random(10, 100);
             num4 = random(2, 4);
 
-            formula = `Sum from n=${num1} to ${num2} of ${num3}*n^${num4}`;
+            formula = `\\[\\sum_{n = ${num1}}^{${num2}}${num3}n^{${num4}}\\]`;
+
+            let actualAnswer = 0;
+
+            for (let i = num1; i <= num2; i++) {
+                actualAnswer += num3 * i ** num4;
+            }
+
+            //console.log(actualAnswer);
 
             break;
         case 4:
@@ -146,11 +170,11 @@ export const SimpleMathQuestion = ({ user }) => {
                 }
             }
 
-            const plainMatrix = matrixValues
-                .map(row => row.join(' '))
-                .join(' | ');
+            const latexMatrix = matrixValues
+                .map(row => row.join(' & '))
+                .join(' \\\\ ');
 
-            formula = `det(${plainMatrix})`;
+            formula = `\\[ \\det\\!\\begin{pmatrix} ${latexMatrix} \\end{pmatrix} \\]`;
             //console.log(math.det(matrixValues));
             break;
         default:
@@ -204,17 +228,17 @@ export const SimpleMathQuestion = ({ user }) => {
     }
 
     return (
-        <div style={{ 
-            width: '100%', 
-            display: 'flex', 
-            flexDirection: 'column', 
+        <div style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
             gap: '20px',
             padding: '0 30px',
             alignItems: 'center'
         }}>
-            <p style={{ 
-                margin: 0, 
-                fontSize: '16px', 
+            <p style={{
+                margin: 0,
+                fontSize: '16px',
                 textAlign: 'center',
                 lineHeight: '1.5',
                 whiteSpace: 'pre-line'
@@ -228,7 +252,7 @@ export const SimpleMathQuestion = ({ user }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '15px',
-                    alignItems: 'center'
+                    alignItems: 'center',
                 }}>
                     <div style={{
                         fontSize: '16px',
@@ -236,10 +260,17 @@ export const SimpleMathQuestion = ({ user }) => {
                         padding: '15px',
                         backgroundColor: '#f5f5f5',
                         width: '100%',
+                        minWidth: 'fit-content',
+                        minHeight: "fit-content",
                         textAlign: 'center',
-                        fontFamily: 'monospace'
+                        fontFamily: 'sans-serif',
+                        overflow: 'auto',
                     }}>
-                        {formula}
+                        <MathJaxContext config={config}>
+                            <span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                                <MathJax inline>{formula}</MathJax>
+                            </span>
+                        </MathJaxContext>
                     </div>
 
                     <div style={{
@@ -248,14 +279,14 @@ export const SimpleMathQuestion = ({ user }) => {
                         flexDirection: 'column',
                         gap: '12px'
                     }}>
-                        <input 
-                            ref={inputRef} 
+                        <input
+                            ref={inputRef}
                             className="form-input"
                             placeholder="Enter your answer"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                         />
-                        <button 
+                        <button
                             onClick={() => {
                                 if (checkIfMathRight() || isAbleToAuthenticate) {
                                     setCompleted(true);
@@ -268,7 +299,7 @@ export const SimpleMathQuestion = ({ user }) => {
                                 setInputValue("");
                             }}
                             disabled={!inputValue.trim()}
-                            style={{ 
+                            style={{
                                 width: '100%',
                                 padding: '12px 20px',
                                 height: '50px',
