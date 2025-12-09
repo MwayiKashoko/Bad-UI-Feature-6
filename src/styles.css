@@ -10,7 +10,7 @@
   --yellow: #feff54;
 }
 
-* {
+*:not(mjx-container):not(mjx-container *) {
   font-family: "Zen Maru Gothic", sans-serif;
 }
 

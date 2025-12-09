@@ -264,12 +264,12 @@ export const SimpleMathQuestion = ({ user }) => {
                         minWidth: 'fit-content',
                         minHeight: "fit-content",
                         textAlign: 'center',
-                        fontFamily: 'sans-serif',
+                        fontFamily: 'helvetica',
                         overflow: 'auto',
                     }}>
-                        <MathJaxContext config={config}>
-                            <span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
-                                <MathJax inline>{formula}</MathJax>
+                        <MathJaxContext class="math" config={config}>
+                            <span class="math" style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                                <MathJax class="math" inline>{formula}</MathJax>
                             </span>
                         </MathJaxContext>
                     </div>
