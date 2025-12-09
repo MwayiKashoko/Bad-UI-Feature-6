@@ -8,7 +8,9 @@
 - Deployed project to web hosting platform Netlify
 
 ### Added (Student B)
-- 
+- Create CAPTCHAs or other UI that only allow verification when complete
+- Allow for user interaction on CAPTCHAs that need it (piano, Mario, Tetris)
+- Set readable and accurate math equations with MathJax
 
 ## [0.3.0] - 2025-11-7
 
