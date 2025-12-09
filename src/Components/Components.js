@@ -13,7 +13,7 @@ import ProtectedRoute from "./ProtectedRoute/ProtectedRoute.js";
 import PublicRoute from "./PublicRoute/PublicRoute.js";
 import Main from "./Main/MainGood.js";
 import Home from "./Home/Home.js";
-import BadUIPage from "./BadUI/BadUIPage.js";
+import BadUIPage from "./Home/BadUIPage.js";
 import { isAuthenticated } from "./Auth/AuthService.js";
 
 /**

@@ -10,7 +10,7 @@ import {
 
 import { random } from "./otherFunctions";
 import { Game } from "./collection";
-import { setIsAbleToAuthenticate } from "../../Scripts/BadUIScripts";
+import { setIsAbleToAuthenticate } from "../BadUIComponents";
 
 import {
     Player,

@@ -1,4 +1,4 @@
-import { isAbleToAuthenticate, setIsAbleToAuthenticate } from "../../Scripts/BadUIScripts";
+import { isAbleToAuthenticate, setIsAbleToAuthenticate } from "../BadUIComponents";
 
 export const tetrisCode = (canvas, typeOfGameMode) => {
     const graphics = canvas.getContext("2d");
