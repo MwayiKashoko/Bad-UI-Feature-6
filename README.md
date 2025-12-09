@@ -27,16 +27,3 @@ REFERENCES
 - Student A used Cursor (with Claude-4.5-Sonnet) for vibecoding and debugging
 - Student B used ChatGPT (with GPT-4o) for vibecoding and debugging
 
-
-<br>
-<br>
-<br>
-&nbsp; To deploy the project to Netlify (for Student A's reference)
-
-<br>
-
-```bash
-npm run netlify:deploy:prod
-```
-
-
