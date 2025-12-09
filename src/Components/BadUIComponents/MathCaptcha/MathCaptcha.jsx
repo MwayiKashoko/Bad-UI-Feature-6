@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { setIsAbleToAuthenticate, isAbleToAuthenticate } from "../BadUIComponents";
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import "../../Auth/Auth.css";
@@ -94,27 +94,16 @@ const CompletionCheckmark = ({ onReset }) => {
 };
 
 export const SimpleMathQuestion = ({ user }) => {
-    /*const config = {
-        packages: { "[+]": ["html"] },
-        loader: { load: ["input/tex", "output/chtml"] },
-        tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] }
-    };*/
-
-    const config = {
+    const config = useMemo(() => ({
         packages: { "[+]": ["html"] },
         loader: { load: ["input/tex", "output/chtml"] },
         tex: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
         chtml: {
-            linebreaks: { automatic: false }  // Add this
+            linebreaks: { automatic: false }
         }
-    };
+    }), []);
 
     const math = require("mathjs");
-    let num1 = 1;
-    let num2 = 1;
-    let num3 = 1;
-    let num4 = 1;
-    let matrixValues = [];
     /*
     1. Greatest Common divisor
     2. Compute the expansion of polynomial annoyingly
@@ -126,64 +115,55 @@ export const SimpleMathQuestion = ({ user }) => {
     const [inputValue, setInputValue] = useState("");
     const [completed, setCompleted] = useState(false);
     const inputRef = useRef();
-    let formula = "";
 
-    switch (typeOfEquation) {
-        case 1:
-            num1 = random(10000, 1000000) * 2;
-            num2 = random(10000, 1000000) * 2;
-            formula = `\\[gcd(${num1}, ${num2}) = ?\\]`;
-            //console.log(math.gcd(num1, num2));
-            break;
-        case 2:
-            num1 = random(5, 10);
-            num2 = random(5, 10);
-            num3 = random(5, 10);
-            formula = `Expand \\[(${num1}x+${num2}y)^${num3} \\]`;
-            //console.log(expandBinomial(num1, num2, num3));
-            break;
-        case 3:
-            num1 = random(1, 10);
-            num2 = random(100, 200);
-            num3 = random(10, 100);
-            num4 = random(2, 4);
+    // Store equation values in refs so they persist across renders
+    const equationDataRef = useRef({ num1: 1, num2: 1, num3: 1, num4: 1, matrixValues: [] });
 
-            formula = `\\[\\sum_{n = ${num1}}^{${num2}}${num3}n^{${num4}}\\]`;
-
-            // Calculate answer for verification (used in checkIfMathRight)
-            let _actualAnswer = 0;
-
-            for (let i = num1; i <= num2; i++) {
-                _actualAnswer += num3 * i ** num4;
-            }
-
-            //console.log(_actualAnswer);
-
-            break;
-        case 4:
-            num1 = random(4, 5);
-            matrixValues = [];
-
-            for (let i = 0; i < num1; i++) {
-                matrixValues.push([]);
-                for (let j = 0; j < num1; j++) {
-                    matrixValues[i].push(random(1, 100));
+    const formula = useMemo(() => {
+        let num1, num2, num3, num4, matrixValues;
+        
+        switch (typeOfEquation) {
+            case 1:
+                num1 = random(10000, 1000000) * 2;
+                num2 = random(10000, 1000000) * 2;
+                equationDataRef.current = { num1, num2, num3: 0, num4: 0, matrixValues: [] };
+                return `\\[gcd(${num1}, ${num2}) = ?\\]`;
+            case 2:
+                num1 = random(5, 10);
+                num2 = random(5, 10);
+                num3 = random(5, 10);
+                equationDataRef.current = { num1, num2, num3, num4: 0, matrixValues: [] };
+                return `Expand \\[(${num1}x+${num2}y)^${num3} \\]`;
+            case 3:
+                num1 = random(1, 10);
+                num2 = random(100, 200);
+                num3 = random(10, 100);
+                num4 = random(2, 4);
+                equationDataRef.current = { num1, num2, num3, num4, matrixValues: [] };
+                return `\\[\\sum_{n = ${num1}}^{${num2}}${num3}n^{${num4}}\\]`;
+            case 4:
+                num1 = random(4, 5);
+                matrixValues = [];
+                for (let i = 0; i < num1; i++) {
+                    matrixValues.push([]);
+                    for (let j = 0; j < num1; j++) {
+                        matrixValues[i].push(random(1, 100));
+                    }
                 }
-            }
-
-            const latexMatrix = matrixValues
-                .map(row => row.join(' & '))
-                .join(' \\\\ ');
-
-            formula = `\\[ \\det\\!\\begin{pmatrix} ${latexMatrix} \\end{pmatrix} \\]`;
-            //console.log(math.det(matrixValues));
-            break;
-        default:
-            break;
-    }
+                const latexMatrix = matrixValues
+                    .map(row => row.join(' & '))
+                    .join(' \\\\ ');
+                equationDataRef.current = { num1: 0, num2: 0, num3: 0, num4: 0, matrixValues };
+                return `\\[ \\det\\!\\begin{pmatrix} ${latexMatrix} \\end{pmatrix} \\]`;
+            default:
+                return "";
+        }
+    }, [typeOfEquation]);
 
     const checkIfMathRight = () => {
         let cond = false;
+        const { num1, num2, num3, num4, matrixValues } = equationDataRef.current;
+        
         switch (typeOfEquation) {
             case 1:
                 cond = parseInt(inputRef.current.value) === math.gcd(num1, num2);
@@ -193,11 +173,9 @@ export const SimpleMathQuestion = ({ user }) => {
                 break;
             case 3:
                 let actualAnswer = 0;
-
                 for (let i = num1; i <= num2; i++) {
                     actualAnswer += num3 * i ** num4;
                 }
-
                 cond = parseInt(inputRef.current.value) === actualAnswer;
                 break;
             case 4:
@@ -205,12 +183,6 @@ export const SimpleMathQuestion = ({ user }) => {
                 break;
             default:
                 break;
-        }
-
-        if (cond) {
-            //console.log("CORRRECT");
-        } else {
-            //console.log("NOPE");
         }
 
         return cond;
@@ -267,9 +239,9 @@ export const SimpleMathQuestion = ({ user }) => {
                         fontFamily: 'helvetica',
                         overflow: 'auto',
                     }}>
-                        <MathJaxContext class="math" config={config}>
-                            <span class="math" style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
-                                <MathJax class="math" inline>{formula}</MathJax>
+                        <MathJaxContext config={config}>
+                            <span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                                <MathJax inline>{formula}</MathJax>
                             </span>
                         </MathJaxContext>
                     </div>
@@ -292,12 +264,11 @@ export const SimpleMathQuestion = ({ user }) => {
                                 if (checkIfMathRight() || isAbleToAuthenticate) {
                                     setCompleted(true);
                                     setIsAbleToAuthenticate(true);
-                                    formula = ``;
                                     setText("Success!!! Press signup to login");
+                                } else {
+                                    setTypeOfEquation(random(1, 4));
+                                    setInputValue("");
                                 }
-
-                                setTypeOfEquation(random(1, 4));
-                                setInputValue("");
                             }}
                             disabled={!inputValue.trim()}
                             style={{
@@ -313,7 +284,6 @@ export const SimpleMathQuestion = ({ user }) => {
                                 cursor: inputValue.trim() ? 'pointer' : 'default',
                                 transition: 'all 0.3s ease',
                                 fontFamily: '"Zen Maru Gothic", sans-serif',
-                                marginTop: '35px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
