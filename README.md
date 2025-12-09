@@ -7,7 +7,7 @@
 **Student B:** Mwayi Kashoko
 <br>
 
-
+*Code implemented by Student B is inside the BadUIComponents folder. All files outside of that folder were implemented by Student A.*
 
 
 &nbsp;<em>To view the project, visit:</em> <a href="https://feature6.netlify.app/">feature6.netlify.app</a>

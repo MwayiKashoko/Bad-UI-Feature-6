@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.4.0] - 2025-12-8
+## [0.4.0] - 2025-12-9
 
 ### Added (Student A)
 - Added Google login/signup functionality
